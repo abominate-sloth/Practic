@@ -5,9 +5,9 @@ import com.library.model.BookAuthor;
 import java.sql.*;
 
 public class BookAuthorDAO {
-    private final String url = "jdbc:postgresql://localhost:5432/your_database_name";
-    private final String user = "your_username";
-    private final String password = "your_password";
+    private final String url = "jdbc:postgresql://localhost:5432/postgres";
+    private final String user = "postgres";
+    private final String password = "postgres";
 
     private Connection connect() throws SQLException {
         return DriverManager.getConnection(url, user, password);

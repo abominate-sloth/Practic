@@ -1,71 +1,75 @@
 package com.library.dao;
 
-import com.library.model.Genre;
+import com.library.model.Author;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenreDAO {
+public class AuthorDAO {
     private final String url = "jdbc:postgresql://localhost:5432/postgres";
     private final String user = "postgres";
     private final String password = "postgres";
 
+    // Метод для подключения к базе данных
     private Connection connect() throws SQLException {
         return DriverManager.getConnection(url, user, password);
     }
 
-    // Добавление жанра
-    public void addGenre(Genre genre) {
-        String sql = "INSERT INTO genres (name) VALUES (?)";
+    // Create (Добавление автора)
+    public void addAuthor(Author author) {
+        String sql = "INSERT INTO authors (name, birth_date) VALUES (?, ?)";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, genre.getName());
+            pstmt.setString(1, author.getName());
+            pstmt.setDate(2, author.getBirthDate());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    // Получение всех жанров
-    public List<Genre> getAllGenres() {
-        List<Genre> genres = new ArrayList<>();
-        String sql = "SELECT * FROM genres";
+    // Read (Получение всех авторов)
+    public List<Author> getAllAuthors() {
+        List<Author> authors = new ArrayList<>();
+        String sql = "SELECT * FROM authors";
 
         try (Connection conn = connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Genre genre = new Genre();
-                genre.setId(rs.getInt("id"));
-                genre.setName(rs.getString("name"));
-                genres.add(genre);
+                Author author = new Author();
+                author.setId(rs.getInt("id"));
+                author.setName(rs.getString("name"));
+                author.setBirthDate(rs.getDate("birth_date"));
+                authors.add(author);
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return genres;
+        return authors;
     }
 
-    // Обновление жанра
-    public void updateGenre(Genre genre) {
-        String sql = "UPDATE genres SET name = ? WHERE id = ?";
+    // Update (Обновление автора)
+    public void updateAuthor(Author author) {
+        String sql = "UPDATE authors SET name = ?, birth_date = ? WHERE id = ?";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, genre.getName());
-            pstmt.setInt(2, genre.getId());
+            pstmt.setString(1, author.getName());
+            pstmt.setDate(2, author.getBirthDate());
+            pstmt.setInt(3, author.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    // Удаление жанра
-    public void deleteGenre(int id) {
-        String sql = "DELETE FROM genres WHERE id = ?";
+    // Delete (Удаление автора)
+    public void deleteAuthor(int id) {
+        String sql = "DELETE FROM authors WHERE id = ?";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
