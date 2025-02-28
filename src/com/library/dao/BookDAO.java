@@ -22,9 +22,12 @@ public class BookDAO {
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, book.getTitle());
-            pstmt.setInt(2, book.getAuthorId());
-            pstmt.setInt(3, book.getGenreId());
-            pstmt.setInt(4, book.getPublishYear());
+
+            // Используем setObject для nullable полей
+            pstmt.setObject(2, book.getAuthorId());
+            pstmt.setObject(3, book.getGenreId());
+            pstmt.setObject(4, book.getPublishYear());
+
             pstmt.setString(5, book.getIsbn());
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -45,9 +48,12 @@ public class BookDAO {
                 Book book = new Book();
                 book.setId(rs.getInt("id"));
                 book.setTitle(rs.getString("title"));
-                book.setAuthorId(rs.getInt("author_id"));
-                book.setGenreId(rs.getInt("genre_id"));
-                book.setPublishYear(rs.getInt("publish_year"));
+
+                // Используем getObject для nullable полей
+                book.setAuthorId((Integer) rs.getObject("author_id"));
+                book.setGenreId((Integer) rs.getObject("genre_id"));
+                book.setPublishYear((Integer) rs.getObject("publish_year"));
+
                 book.setIsbn(rs.getString("isbn"));
                 books.add(book);
             }
@@ -64,9 +70,12 @@ public class BookDAO {
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, book.getTitle());
-            pstmt.setInt(2, book.getAuthorId());
-            pstmt.setInt(3, book.getGenreId());
-            pstmt.setInt(4, book.getPublishYear());
+
+            // Используем setObject для nullable полей
+            pstmt.setObject(2, book.getAuthorId());
+            pstmt.setObject(3, book.getGenreId());
+            pstmt.setObject(4, book.getPublishYear());
+
             pstmt.setString(5, book.getIsbn());
             pstmt.setInt(6, book.getId());
             pstmt.executeUpdate();
