@@ -3,15 +3,15 @@ package com.library.model;
 public class Book {
     private int id;
     private String title;
-    private int authorId; // Внешний ключ на таблицу Authors
-    private int genreId;  // Внешний ключ на таблицу Genres
-    private int publishYear;
+    private Integer authorId; // Внешний ключ на таблицу Authors
+    private Integer genreId;  // Внешний ключ на таблицу Genres
+    private Integer publishYear;
     private String isbn;
 
     // Конструкторы
     public Book() {}
 
-    public Book(int id, String title, int authorId, int genreId, int publishYear, String isbn) {
+    public Book(int id, String title, Integer authorId, Integer genreId, Integer publishYear, String isbn) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;
@@ -27,14 +27,14 @@ public class Book {
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public int getAuthorId() { return authorId; }
-    public void setAuthorId(int authorId) { this.authorId = authorId; }
+    public Integer getAuthorId() { return authorId; }
+    public void setAuthorId(Integer authorId) { this.authorId = authorId; }
 
-    public int getGenreId() { return genreId; }
-    public void setGenreId(int genreId) { this.genreId = genreId; }
+    public Integer getGenreId() { return genreId; }
+    public void setGenreId(Integer genreId) { this.genreId = genreId; }
 
-    public int getPublishYear() { return publishYear; }
-    public void setPublishYear(int publishYear) { this.publishYear = publishYear; }
+    public Integer getPublishYear() { return publishYear; }
+    public void setPublishYear(Integer publishYear) { this.publishYear = publishYear; }
 
     public String getIsbn() { return isbn; }
     public void setIsbn(String isbn) { this.isbn = isbn; }
