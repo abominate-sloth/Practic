@@ -20,6 +20,10 @@ public class Main {
 
     private static final String WRONG_OPTION = "Неверный выбор. Попробуйте снова.";
 
+    public static <T> T replaceIfEmpty(String value, T replacement) {
+        return value == null || value.isEmpty() ? replacement : (T) value;
+    }
+
     public static void main(String[] args) {
         ProcessMainMenu();
     }
@@ -93,8 +97,8 @@ public class Main {
                     System.out.print("Введите дату рождения автора (в формате ГГГГ-ММ-ДД, или оставьте пустым): ");
                     String birthDateInput = SCANNER.nextLine();
 
-                    // Если строка пустая, передаём null
-                    Date birthDate = birthDateInput.isEmpty() ? null : Date.valueOf(birthDateInput);
+                    // Используем метод replaceIfEmpty для обработки пустой строки
+                    Date birthDate = replaceIfEmpty(birthDateInput, null);
 
                     Author author = new Author(0, name, birthDate);
                     authorDAO.addAuthor(author);
@@ -116,8 +120,8 @@ public class Main {
                     System.out.print("Введите новую дату рождения автора (в формате ГГГГ-ММ-ДД, или оставьте пустым): ");
                     String newBirthDateInput = SCANNER.nextLine();
 
-                    // Если строка пустая, передаём null
-                    Date newBirthDate = newBirthDateInput.isEmpty() ? null : Date.valueOf(newBirthDateInput);
+                    // Используем метод replaceIfEmpty для обработки пустой строки
+                    Date newBirthDate = replaceIfEmpty(newBirthDateInput, null);
 
                     Author updatedAuthor = new Author(updateId, newName, newBirthDate);
                     authorDAO.updateAuthor(updatedAuthor);
@@ -136,6 +140,7 @@ public class Main {
             }
         }
     }
+
     @SuppressWarnings("squid:S106")
     private static void processBookMenu() {
         BookDAO bookDAO = new BookDAO();
@@ -152,19 +157,19 @@ public class Main {
 
                     System.out.print("Введите ID автора (или оставьте пустым): ");
                     String authorIdInput = SCANNER.nextLine();
-                    Integer authorId = authorIdInput.isEmpty() ? null : Integer.parseInt(authorIdInput);
+                    Integer authorId = replaceIfEmpty(authorIdInput, null);
 
                     System.out.print("Введите ID жанра (или оставьте пустым): ");
                     String genreIdInput = SCANNER.nextLine();
-                    Integer genreId = genreIdInput.isEmpty() ? null : Integer.parseInt(genreIdInput);
+                    Integer genreId = replaceIfEmpty(genreIdInput, null);
 
                     System.out.print("Введите год публикации (или оставьте пустым): ");
                     String publishYearInput = SCANNER.nextLine();
-                    Integer publishYear = publishYearInput.isEmpty() ? null : Integer.parseInt(publishYearInput);
+                    Integer publishYear = replaceIfEmpty(publishYearInput, null);
 
                     System.out.print("Введите ISBN (или оставьте пустым): ");
                     String isbn = SCANNER.nextLine();
-                    String finalIsbn = isbn.isEmpty() ? null : isbn;
+                    String finalIsbn = replaceIfEmpty(isbn, null);
 
                     Book book = new Book(0, title, authorId, genreId, publishYear, finalIsbn);
                     System.out.println("Добавляем книгу....");
@@ -187,19 +192,19 @@ public class Main {
 
                     System.out.print("Введите новый ID автора (или оставьте пустым): ");
                     String newAuthorIdInput = SCANNER.nextLine();
-                    Integer newAuthorId = newAuthorIdInput.isEmpty() ? null : Integer.parseInt(newAuthorIdInput);
+                    Integer newAuthorId = replaceIfEmpty(newAuthorIdInput, null);
 
                     System.out.print("Введите новый ID жанра (или оставьте пустым): ");
                     String newGenreIdInput = SCANNER.nextLine();
-                    Integer newGenreId = newGenreIdInput.isEmpty() ? null : Integer.parseInt(newGenreIdInput);
+                    Integer newGenreId = replaceIfEmpty(newGenreIdInput, null);
 
                     System.out.print("Введите новый год публикации (или оставьте пустым): ");
                     String newPublishYearInput = SCANNER.nextLine();
-                    Integer newPublishYear = newPublishYearInput.isEmpty() ? null : Integer.parseInt(newPublishYearInput);
+                    Integer newPublishYear = replaceIfEmpty(newPublishYearInput, null);
 
                     System.out.print("Введите новый ISBN (или оставьте пустым): ");
                     String newIsbn = SCANNER.nextLine();
-                    String finalNewIsbn = newIsbn.isEmpty() ? null : newIsbn;
+                    String finalNewIsbn = replaceIfEmpty(newIsbn, null);
 
                     Book updatedBook = new Book(updateId, newTitle, newAuthorId, newGenreId, newPublishYear, finalNewIsbn);
                     bookDAO.updateBook(updatedBook);
@@ -233,6 +238,9 @@ public class Main {
                     System.out.print("Введите название жанра: ");
                     String name = SCANNER.nextLine();
 
+                    // Используем метод replaceIfEmpty для обработки пустой строки
+                    name = replaceIfEmpty(name, null);
+
                     Genre genre = new Genre(0, name);
                     genreDAO.addGenre(genre);
                     System.out.println("Жанр успешно добавлен!");
@@ -249,6 +257,9 @@ public class Main {
                     SCANNER.nextLine();
                     System.out.print("Введите новое название жанра: ");
                     String newName = SCANNER.nextLine();
+
+                    // Используем метод replaceIfEmpty для обработки пустой строки
+                    newName = replaceIfEmpty(newName, null);
 
                     Genre updatedGenre = new Genre(updateId, newName);
                     genreDAO.updateGenre(updatedGenre);
@@ -271,7 +282,7 @@ public class Main {
     @SuppressWarnings("squid:S106")
     private static void processReaderMenu() {
         ReaderDAO readerDAO = new ReaderDAO();
-        System.out.print("Работа с таблицей Читателт\n" + SUB_MENU);
+        System.out.print("Работа с таблицей Читателей\n" + SUB_MENU);
 
         while (true) {
             int choice = SCANNER.nextInt();
@@ -284,11 +295,11 @@ public class Main {
 
                     System.out.print("Введите email читателя (или оставьте пустым): ");
                     String email = SCANNER.nextLine();
-                    String finalEmail = email.isEmpty() ? null : email;
+                    String finalEmail = replaceIfEmpty(email, null);
 
                     System.out.print("Введите дату регистрации (в формате ГГГГ-ММ-ДД, или оставьте пустым): ");
                     String joinDateInput = SCANNER.nextLine();
-                    Date joinDate = joinDateInput.isEmpty() ? null : Date.valueOf(joinDateInput);
+                    Date joinDate = replaceIfEmpty(joinDateInput, null);
 
                     Reader reader = new Reader(0, name, finalEmail, joinDate);
                     readerDAO.addReader(reader);
@@ -310,11 +321,11 @@ public class Main {
 
                     System.out.print("Введите новый email читателя (или оставьте пустым): ");
                     String newEmail = SCANNER.nextLine();
-                    String finalNewEmail = newEmail.isEmpty() ? null : newEmail;
+                    String finalNewEmail = replaceIfEmpty(newEmail, null);
 
                     System.out.print("Введите новую дату регистрации (в формате ГГГГ-ММ-ДД, или оставьте пустым): ");
                     String newJoinDateInput = SCANNER.nextLine();
-                    Date newJoinDate = newJoinDateInput.isEmpty() ? null : Date.valueOf(newJoinDateInput);
+                    Date newJoinDate = replaceIfEmpty(newJoinDateInput, null);
 
                     Reader updatedReader = new Reader(updateId, newName, finalNewEmail, newJoinDate);
                     readerDAO.updateReader(updatedReader);
@@ -358,7 +369,7 @@ public class Main {
 
                     System.out.print("Введите дату возврата (в формате ГГГГ-ММ-ДД, или оставьте пустым): ");
                     String returnDateInput = SCANNER.nextLine();
-                    Date returnDate = returnDateInput.isEmpty() ? null : Date.valueOf(returnDateInput);
+                    Date returnDate = replaceIfEmpty(returnDateInput, null);
 
                     Issue issue = new Issue(0, bookId, readerId, issueDate, returnDate);
                     issueDAO.addIssue(issue);
@@ -388,7 +399,7 @@ public class Main {
 
                     System.out.print("Введите новую дату возврата (в формате ГГГГ-ММ-ДД, или оставьте пустым): ");
                     String newReturnDateInput = SCANNER.nextLine();
-                    Date newReturnDate = newReturnDateInput.isEmpty() ? null : Date.valueOf(newReturnDateInput);
+                    Date newReturnDate = replaceIfEmpty(newReturnDateInput, null);
 
                     Issue updatedIssue = new Issue(updateId, newBookId, newReaderId, newIssueDate, newReturnDate);
                     issueDAO.updateIssue(updatedIssue);
@@ -413,7 +424,6 @@ public class Main {
         ReviewDAO reviewDAO = new ReviewDAO();
         System.out.print("Работа с таблицей Отзывы\n" + SUB_MENU);
 
-
         while (true) {
             int choice = SCANNER.nextInt();
             SCANNER.nextLine(); // Очистка буфера
@@ -432,7 +442,7 @@ public class Main {
 
                     System.out.print("Введите комментарий (или оставьте пустым): ");
                     String comment = SCANNER.nextLine();
-                    String finalComment = comment.isEmpty() ? null : comment;
+                    String finalComment = replaceIfEmpty(comment, null);
 
                     Review review = new Review(0, bookId, readerId, rating, finalComment);
                     reviewDAO.addReview(review);
@@ -461,7 +471,7 @@ public class Main {
 
                     System.out.print("Введите новый комментарий (или оставьте пустым): ");
                     String newComment = SCANNER.nextLine();
-                    String finalNewComment = newComment.isEmpty() ? null : newComment;
+                    String finalNewComment = replaceIfEmpty(newComment, null);
 
                     Review updatedReview = new Review(updateId, newBookId, newReaderId, newRating, finalNewComment);
                     reviewDAO.updateReview(updatedReview);
@@ -485,7 +495,6 @@ public class Main {
     private static void processBookAuthorMenu() {
         BookAuthorDAO bookAuthorDAO = new BookAuthorDAO();
         System.out.print("Работа с таблицей Связь Книг и Авторов\n" + SUB_MENU);
-
 
         while (true) {
             int choice = SCANNER.nextInt();
