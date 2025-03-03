@@ -9,12 +9,16 @@ import java.util.Scanner;
 public class Main {
     private static final Scanner SCANNER = new Scanner(System.in);
 
-    private static final String SUB_MENU ="1. Добавить запись\n" +
-            "2. Показать все записи\n" +
-            "3. Обновить запись\n" +
-            "4. Удалить запись\n" +
-            "5. Назад\n" +
-            "Ваш выбор: \n";
+    private static final String SUB_MENU = """
+                                        1. Добавить запись
+                                        2. Показать все записи
+                                        3. Обновить запись
+                                        4. Удалить запись
+                                        5. Назад
+                                        Ваш выбор: 
+                                        """;
+
+    private static final String WRONG_OPTION = "Неверный выбор. Попробуйте снова.";
 
     public static void main(String[] args) {
         ProcessMainMenu();
@@ -22,16 +26,17 @@ public class Main {
 
     @SuppressWarnings("squid:S106")
     public static void ProcessMainMenu() {
-        String menu ="Выберите таблицу для работы:\n" +
-                "1. Авторы\n" +
-                "2. Книги\n" +
-                "3. Жанры\n" +
-                "4. Читатели\n" +
-                "5. Выдачи книг\n" +
-                "6. Отзывы\n" +
-                "7. Связь книг и авторов\n" +
-                "8. Завершить работу\n" +
-                "Ваш выбор: ";
+        String menu = """
+               Выберите таблицу для работы:
+               1. Авторы
+               2. Книги
+               3. Жанры
+               4. Читатели
+               5. Выдачи книг
+               6. Отзывы
+               7. Связь книг и авторов
+               8. Завершить работу
+               Ваш выбор: """;
 
         while (true) {
             System.out.print(menu);
@@ -65,7 +70,7 @@ public class Main {
                     System.out.println("Завершение работы программы.");
                     return;
                 default:
-                    System.out.println("Неверный выбор. Попробуйте снова.");
+                    System.out.println(WRONG_OPTION);
             }
         }
     }
@@ -127,7 +132,7 @@ public class Main {
                 case 5:
                     return; // Возврат в главное меню
                 default:
-                    System.out.println("Неверный выбор.");
+                    System.out.println(WRONG_OPTION);
             }
         }
     }
@@ -209,7 +214,7 @@ public class Main {
                 case 5:
                     return;
                 default:
-                    System.out.println("Неверный выбор.");
+                    System.out.println(WRONG_OPTION);
             }
         }
     }
@@ -258,7 +263,7 @@ public class Main {
                 case 5:
                     return;
                 default:
-                    System.out.println("Неверный выбор.");
+                    System.out.println(WRONG_OPTION);
             }
         }
     }
@@ -324,7 +329,7 @@ public class Main {
                 case 5:
                     return; // Возврат в главное меню
                 default:
-                    System.out.println("Неверный выбор.");
+                    System.out.println(WRONG_OPTION);
             }
         }
     }
@@ -398,7 +403,7 @@ public class Main {
                 case 5:
                     return;
                 default:
-                    System.out.println("Неверный выбор.");
+                    System.out.println(WRONG_OPTION);
             }
         }
     }
@@ -471,7 +476,7 @@ public class Main {
                 case 5:
                     return; // Возврат в главное меню
                 default:
-                    System.out.println("Неверный выбор.");
+                    System.out.println(WRONG_OPTION);
             }
         }
     }
@@ -522,7 +527,7 @@ public class Main {
                 case 5:
                     return; // Возврат в главное меню
                 default:
-                    System.out.println("Неверный выбор.");
+                    System.out.println(WRONG_OPTION);
             }
         }
     }
