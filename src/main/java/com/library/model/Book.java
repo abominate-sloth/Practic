@@ -7,17 +7,19 @@ public class Book {
     private Integer genreId;  // Внешний ключ на таблицу Genres
     private Integer publishYear;
     private String isbn;
+    private int copiesAvailable; // Количество доступных экземпляров книги
 
     // Конструкторы
     public Book() {}
 
-    public Book(int id, String title, Integer authorId, Integer genreId, Integer publishYear, String isbn) {
+    public Book(int id, String title, Integer authorId, Integer genreId, Integer publishYear, String isbn, int copiesAvailable) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;
         this.genreId = genreId;
         this.publishYear = publishYear;
         this.isbn = isbn;
+        this.copiesAvailable = copiesAvailable;
     }
 
     // Геттеры и сеттеры
@@ -39,6 +41,9 @@ public class Book {
     public String getIsbn() { return isbn; }
     public void setIsbn(String isbn) { this.isbn = isbn; }
 
+    public int getCopiesAvailable() { return copiesAvailable; } // Новый геттер
+    public void setCopiesAvailable(int copiesAvailable) { this.copiesAvailable = copiesAvailable; } // Новый сеттер
+
     @Override
     public String toString() {
         return "Book{" +
@@ -48,6 +53,7 @@ public class Book {
                 ", genreId=" + genreId +
                 ", publishYear=" + publishYear +
                 ", isbn='" + isbn + '\'' +
+                ", copiesAvailable=" + copiesAvailable +  // Добавлено в toString
                 '}';
     }
 }

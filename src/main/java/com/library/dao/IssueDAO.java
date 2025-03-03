@@ -21,14 +21,15 @@ public class IssueDAO {
 
     // Добавление выдачи книги
     public void addIssue(Issue issue) {
-        String sql = "INSERT INTO issues (book_id, reader_id, issue_date, return_date) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO issues (book_id, reader_id, employee_id, issue_date, return_date) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, issue.getBookId());
             pstmt.setInt(2, issue.getReaderId());
-            pstmt.setDate(3, issue.getIssueDate());
-            pstmt.setDate(4, issue.getReturnDate());
+            pstmt.setInt(3, issue.getEmployeeId()); // Добавлено поле employeeId
+            pstmt.setDate(4, issue.getIssueDate());
+            pstmt.setDate(5, issue.getReturnDate());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Ошибка при добавлении выдачи книги: {0}", e.getMessage());
@@ -49,6 +50,7 @@ public class IssueDAO {
                 issue.setId(rs.getInt("id"));
                 issue.setBookId(rs.getInt("book_id"));
                 issue.setReaderId(rs.getInt("reader_id"));
+                issue.setEmployeeId(rs.getInt("employee_id")); // Получение employeeId
                 issue.setIssueDate(rs.getDate("issue_date"));
                 issue.setReturnDate(rs.getDate("return_date"));
                 issues.add(issue);
@@ -61,15 +63,16 @@ public class IssueDAO {
 
     // Обновление выдачи
     public void updateIssue(Issue issue) {
-        String sql = "UPDATE issues SET book_id = ?, reader_id = ?, issue_date = ?, return_date = ? WHERE id = ?";
+        String sql = "UPDATE issues SET book_id = ?, reader_id = ?, employee_id = ?, issue_date = ?, return_date = ? WHERE id = ?";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, issue.getBookId());
             pstmt.setInt(2, issue.getReaderId());
-            pstmt.setDate(3, issue.getIssueDate());
-            pstmt.setDate(4, issue.getReturnDate());
-            pstmt.setInt(5, issue.getId());
+            pstmt.setInt(3, issue.getEmployeeId()); // Обновление employeeId
+            pstmt.setDate(4, issue.getIssueDate());
+            pstmt.setDate(5, issue.getReturnDate());
+            pstmt.setInt(6, issue.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Ошибка при обновлении выдачи: {0}", e.getMessage());

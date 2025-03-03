@@ -21,7 +21,7 @@ public class BookDAO {
 
     // Добавление книги
     public void addBook(Book book) {
-        String sql = "INSERT INTO books (title, author_id, genre_id, publish_year, isbn) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO books (title, author_id, genre_id, publish_year, isbn, copies_available) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -33,6 +33,7 @@ public class BookDAO {
             pstmt.setObject(4, book.getPublishYear());
 
             pstmt.setString(5, book.getIsbn());
+            pstmt.setInt(6, book.getCopiesAvailable()); // Добавлено поле copiesAvailable
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Ошибка при добавлении книги: {0}", e.getMessage());
@@ -59,6 +60,7 @@ public class BookDAO {
                 book.setPublishYear((Integer) rs.getObject("publish_year"));
 
                 book.setIsbn(rs.getString("isbn"));
+                book.setCopiesAvailable(rs.getInt("copies_available")); // Получение copiesAvailable
                 books.add(book);
             }
         } catch (SQLException e) {
@@ -69,7 +71,7 @@ public class BookDAO {
 
     // Обновление книги
     public void updateBook(Book book) {
-        String sql = "UPDATE books SET title = ?, author_id = ?, genre_id = ?, publish_year = ?, isbn = ? WHERE id = ?";
+        String sql = "UPDATE books SET title = ?, author_id = ?, genre_id = ?, publish_year = ?, isbn = ?, copies_available = ? WHERE id = ?";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -81,7 +83,8 @@ public class BookDAO {
             pstmt.setObject(4, book.getPublishYear());
 
             pstmt.setString(5, book.getIsbn());
-            pstmt.setInt(6, book.getId());
+            pstmt.setInt(6, book.getCopiesAvailable()); // Обновление copiesAvailable
+            pstmt.setInt(7, book.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Ошибка при обновлении книги: {0}", e.getMessage());

@@ -39,7 +39,8 @@ public class Main {
                5. Выдачи книг
                6. Отзывы
                7. Связь книг и авторов
-               8. Завершить работу
+               8. Роли
+               9. Завершить работу
                Ваш выбор: """;
 
         while (true) {
@@ -59,7 +60,7 @@ public class Main {
                     processGenreMenu();
                     break;
                 case 4:
-                    processReaderMenu();
+                    processUserMenu();
                     break;
                 case 5:
                     processIssueMenu();
@@ -71,6 +72,9 @@ public class Main {
                     processBookAuthorMenu();
                     break;
                 case 8:
+                    processRoleMenu();
+                    break;
+                case 9:
                     System.out.println("Завершение работы программы.");
                     return;
                 default:
@@ -171,7 +175,11 @@ public class Main {
                     String isbn = SCANNER.nextLine();
                     String finalIsbn = replaceIfEmpty(isbn, null);
 
-                    Book book = new Book(0, title, authorId, genreId, publishYear, finalIsbn);
+                    System.out.print("Введите количество доступных экземпляров: ");
+                    int copiesAvailable = SCANNER.nextInt();
+                    SCANNER.nextLine(); // Очистка буфера
+
+                    Book book = new Book(0, title, authorId, genreId, publishYear, finalIsbn, copiesAvailable);
                     System.out.println("Добавляем книгу....");
                     bookDAO.addBook(book);
                     System.out.println("Книга успешно добавлена!");
@@ -206,7 +214,11 @@ public class Main {
                     String newIsbn = SCANNER.nextLine();
                     String finalNewIsbn = replaceIfEmpty(newIsbn, null);
 
-                    Book updatedBook = new Book(updateId, newTitle, newAuthorId, newGenreId, newPublishYear, finalNewIsbn);
+                    System.out.print("Введите новое количество доступных экземпляров: ");
+                    int newCopiesAvailable = SCANNER.nextInt();
+                    SCANNER.nextLine(); // Очистка буфера
+
+                    Book updatedBook = new Book(updateId, newTitle, newAuthorId, newGenreId, newPublishYear, finalNewIsbn, newCopiesAvailable);
                     bookDAO.updateBook(updatedBook);
                     System.out.println("Книга успешно обновлена!");
                     break;
@@ -217,7 +229,7 @@ public class Main {
                     System.out.println("Книга успешно удалена!");
                     break;
                 case 5:
-                    return;
+                    return; // Возврат в главное меню
                 default:
                     System.out.println(WRONG_OPTION);
             }
@@ -280,9 +292,9 @@ public class Main {
     }
 
     @SuppressWarnings("squid:S106")
-    private static void processReaderMenu() {
-        ReaderDAO readerDAO = new ReaderDAO();
-        System.out.print("Работа с таблицей Читателей\n" + SUB_MENU);
+    private static void processUserMenu() {
+        UserDAO userDAO = new UserDAO();
+        System.out.print("Работа с таблицей Пользователей\n" + SUB_MENU);
 
         while (true) {
             int choice = SCANNER.nextInt();
@@ -290,10 +302,13 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    System.out.print("Введите имя читателя: ");
-                    String name = SCANNER.nextLine();
+                    System.out.print("Введите логин пользователя: ");
+                    String username = SCANNER.nextLine();
 
-                    System.out.print("Введите email читателя (или оставьте пустым): ");
+                    System.out.print("Введите хэш пароля пользователя: ");
+                    String passwordHash = SCANNER.nextLine();
+
+                    System.out.print("Введите email пользователя (или оставьте пустым): ");
                     String email = SCANNER.nextLine();
                     String finalEmail = replaceIfEmpty(email, null);
 
@@ -301,25 +316,32 @@ public class Main {
                     String joinDateInput = SCANNER.nextLine();
                     Date joinDate = replaceIfEmpty(joinDateInput, null);
 
-                    Reader reader = new Reader(0, name, finalEmail, joinDate);
-                    readerDAO.addReader(reader);
-                    System.out.println("Читатель успешно добавлен!");
+                    System.out.print("Введите ID роли пользователя: ");
+                    int roleId = SCANNER.nextInt();
+                    SCANNER.nextLine(); // Очистка буфера
+
+                    User user = new User(0, username, passwordHash, finalEmail, joinDate, roleId);
+                    userDAO.addUser(user);
+                    System.out.println("Пользователь успешно добавлен!");
                     break;
                 case 2:
-                    System.out.println("Список всех читателей:");
-                    for (Reader r : readerDAO.getAllReaders()) {
-                        System.out.println(r);
+                    System.out.println("Список всех пользователей:");
+                    for (User u : userDAO.getAllUsers()) {
+                        System.out.println(u);
                     }
                     break;
                 case 3:
-                    System.out.print("Введите ID читателя для обновления: ");
+                    System.out.print("Введите ID пользователя для обновления: ");
                     int updateId = SCANNER.nextInt();
                     SCANNER.nextLine();
 
-                    System.out.print("Введите новое имя читателя: ");
-                    String newName = SCANNER.nextLine();
+                    System.out.print("Введите новое имя пользователя: ");
+                    String newUsername = SCANNER.nextLine();
 
-                    System.out.print("Введите новый email читателя (или оставьте пустым): ");
+                    System.out.print("Введите новый хэш пароля пользователя: ");
+                    String newPasswordHash = SCANNER.nextLine();
+
+                    System.out.print("Введите новый email пользователя (или оставьте пустым): ");
                     String newEmail = SCANNER.nextLine();
                     String finalNewEmail = replaceIfEmpty(newEmail, null);
 
@@ -327,15 +349,19 @@ public class Main {
                     String newJoinDateInput = SCANNER.nextLine();
                     Date newJoinDate = replaceIfEmpty(newJoinDateInput, null);
 
-                    Reader updatedReader = new Reader(updateId, newName, finalNewEmail, newJoinDate);
-                    readerDAO.updateReader(updatedReader);
-                    System.out.println("Читатель успешно обновлён!");
+                    System.out.print("Введите новый ID роли пользователя: ");
+                    int newRoleId = SCANNER.nextInt();
+                    SCANNER.nextLine(); // Очистка буфера
+
+                    User updatedUser = new User(updateId, newUsername, newPasswordHash, finalNewEmail, newJoinDate, newRoleId);
+                    userDAO.updateUser(updatedUser);
+                    System.out.println("Пользователь успешно обновлён!");
                     break;
                 case 4:
-                    System.out.print("Введите ID читателя для удаления: ");
+                    System.out.print("Введите ID пользователя для удаления: ");
                     int deleteId = SCANNER.nextInt();
-                    readerDAO.deleteReader(deleteId);
-                    System.out.println("Читатель успешно удалён!");
+                    userDAO.deleteUser(deleteId);
+                    System.out.println("Пользователь успешно удалён!");
                     break;
                 case 5:
                     return; // Возврат в главное меню
@@ -361,6 +387,9 @@ public class Main {
 
                     System.out.print("Введите ID читателя: ");
                     int readerId = SCANNER.nextInt();
+
+                    System.out.print("Введите ID сотрудника: ");
+                    int employeeId = SCANNER.nextInt();
                     SCANNER.nextLine(); // Очистка буфера
 
                     System.out.print("Введите дату выдачи (в формате ГГГГ-ММ-ДД): ");
@@ -371,7 +400,7 @@ public class Main {
                     String returnDateInput = SCANNER.nextLine();
                     Date returnDate = replaceIfEmpty(returnDateInput, null);
 
-                    Issue issue = new Issue(0, bookId, readerId, issueDate, returnDate);
+                    Issue issue = new Issue(0, bookId, readerId, employeeId, issueDate, returnDate);
                     issueDAO.addIssue(issue);
                     System.out.println("Выдача книги успешно добавлена!");
                     break;
@@ -391,6 +420,9 @@ public class Main {
 
                     System.out.print("Введите новый ID читателя: ");
                     int newReaderId = SCANNER.nextInt();
+
+                    System.out.print("Введите новый ID сотрудника: ");
+                    int newEmployeeId = SCANNER.nextInt();
                     SCANNER.nextLine(); // Очистка буфера
 
                     System.out.print("Введите новую дату выдачи (в формате ГГГГ-ММ-ДД): ");
@@ -401,7 +433,7 @@ public class Main {
                     String newReturnDateInput = SCANNER.nextLine();
                     Date newReturnDate = replaceIfEmpty(newReturnDateInput, null);
 
-                    Issue updatedIssue = new Issue(updateId, newBookId, newReaderId, newIssueDate, newReturnDate);
+                    Issue updatedIssue = new Issue(updateId, newBookId, newReaderId, newEmployeeId, newIssueDate, newReturnDate);
                     issueDAO.updateIssue(updatedIssue);
                     System.out.println("Выдача книги успешно обновлена!");
                     break;
@@ -412,7 +444,7 @@ public class Main {
                     System.out.println("Выдача книги успешно удалена!");
                     break;
                 case 5:
-                    return;
+                    return; // Возврат в главное меню
                 default:
                     System.out.println(WRONG_OPTION);
             }
@@ -482,6 +514,56 @@ public class Main {
                     int deleteId = SCANNER.nextInt();
                     reviewDAO.deleteReview(deleteId);
                     System.out.println("Отзыв успешно удалён!");
+                    break;
+                case 5:
+                    return; // Возврат в главное меню
+                default:
+                    System.out.println(WRONG_OPTION);
+            }
+        }
+    }
+
+    @SuppressWarnings("squid:S106")
+    private static void processRoleMenu() {
+        RoleDAO roleDAO = new RoleDAO();
+        System.out.print("Работа с таблицей Ролей\n" + SUB_MENU);
+
+        while (true) {
+            int choice = SCANNER.nextInt();
+            SCANNER.nextLine(); // Очистка буфера
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Введите название роли: ");
+                    String roleName = SCANNER.nextLine();
+
+                    Role newRole = new Role(0, roleName); // Предполагается, что у вас есть конструктор для роли
+                    roleDAO.addRole(newRole);
+                    System.out.println("Роль успешно добавлена!");
+                    break;
+                case 2:
+                    System.out.println("Список всех ролей:");
+                    for (Role role : roleDAO.getAllRoles()) {
+                        System.out.println(role);
+                    }
+                    break;
+                case 3:
+                    System.out.print("Введите ID роли для обновления: ");
+                    int updateId = SCANNER.nextInt();
+                    SCANNER.nextLine();
+
+                    System.out.print("Введите новое название роли: ");
+                    String newRoleName = SCANNER.nextLine();
+
+                    Role updatedRole = new Role(updateId, newRoleName);
+                    roleDAO.updateRole(updatedRole);
+                    System.out.println("Роль успешно обновлена!");
+                    break;
+                case 4:
+                    System.out.print("Введите ID роли для удаления: ");
+                    int deleteId = SCANNER.nextInt();
+                    roleDAO.deleteRole(deleteId);
+                    System.out.println("Роль успешно удалена!");
                     break;
                 case 5:
                     return; // Возврат в главное меню
