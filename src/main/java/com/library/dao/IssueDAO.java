@@ -5,14 +5,18 @@ import com.library.model.Issue;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IssueDAO {
-    private static final String url = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String user = "postgres";
-    private static final String password = "postgres";
+    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "postgres";
+    private static final Logger logger = Logger.getLogger(IssueDAO.class.getName());
 
+    // Метод для подключения к базе данных
     private Connection connect() throws SQLException {
-        return DriverManager.getConnection(url, user, password);
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     // Добавление выдачи книги
@@ -27,7 +31,7 @@ public class IssueDAO {
             pstmt.setDate(4, issue.getReturnDate());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при добавлении выдачи книги: {0}", e.getMessage());
         }
     }
 
@@ -50,7 +54,7 @@ public class IssueDAO {
                 issues.add(issue);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при получении всех выдач: {0}", e.getMessage());
         }
         return issues;
     }
@@ -68,7 +72,7 @@ public class IssueDAO {
             pstmt.setInt(5, issue.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при обновлении выдачи: {0}", e.getMessage());
         }
     }
 
@@ -81,7 +85,7 @@ public class IssueDAO {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при удалении выдачи: {0}", e.getMessage());
         }
     }
 }

@@ -5,14 +5,18 @@ import com.library.model.Book;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BookDAO {
-    private static final String url = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String user = "postgres";
-    private static final String password = "postgres";
+    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "postgres";
+    private static final Logger logger = Logger.getLogger(BookDAO.class.getName());
 
+    // Метод для подключения к базе данных
     private Connection connect() throws SQLException {
-        return DriverManager.getConnection(url, user, password);
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     // Добавление книги
@@ -31,7 +35,7 @@ public class BookDAO {
             pstmt.setString(5, book.getIsbn());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при добавлении книги: {0}", e.getMessage());
         }
     }
 
@@ -58,7 +62,7 @@ public class BookDAO {
                 books.add(book);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при получении книг: {0}", e.getMessage());
         }
         return books;
     }
@@ -80,7 +84,7 @@ public class BookDAO {
             pstmt.setInt(6, book.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при обновлении книги: {0}", e.getMessage());
         }
     }
 
@@ -93,7 +97,7 @@ public class BookDAO {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при удалении книги: {0}", e.getMessage());
         }
     }
 }

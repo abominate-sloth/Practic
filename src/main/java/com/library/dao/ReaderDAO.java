@@ -5,14 +5,18 @@ import com.library.model.Reader;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ReaderDAO {
-    private static final String url = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String user = "postgres";
-    private static final String password = "postgres";
+    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "postgres";
+    private static final Logger logger = Logger.getLogger(ReaderDAO.class.getName());
 
+    // Метод для подключения к базе данных
     private Connection connect() throws SQLException {
-        return DriverManager.getConnection(url, user, password);
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     // Добавление читателя
@@ -26,7 +30,7 @@ public class ReaderDAO {
             pstmt.setDate(3, reader.getJoinDate());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при добавлении читателя: {0}", e.getMessage());
         }
     }
 
@@ -48,7 +52,7 @@ public class ReaderDAO {
                 readers.add(reader);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при получении всех читателей: {0}", e.getMessage());
         }
         return readers;
     }
@@ -65,7 +69,7 @@ public class ReaderDAO {
             pstmt.setInt(4, reader.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при обновлении читателя: {0}", e.getMessage());
         }
     }
 
@@ -78,7 +82,7 @@ public class ReaderDAO {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при удалении читателя: {0}", e.getMessage());
         }
     }
 }

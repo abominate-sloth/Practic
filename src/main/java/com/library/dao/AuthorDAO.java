@@ -5,15 +5,18 @@ import com.library.model.Author;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AuthorDAO {
-    private static final String url = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String user = "postgres";
-    private static final String password = "postgres";
+    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "postgres";
+    private static final Logger logger = Logger.getLogger(AuthorDAO.class.getName());
 
     // Метод для подключения к базе данных
     private Connection connect() throws SQLException {
-        return DriverManager.getConnection(url, user, password);
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     // Create (Добавление автора)
@@ -26,7 +29,7 @@ public class AuthorDAO {
             pstmt.setDate(2, author.getBirthDate());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при добавлении автора: {0}", e.getMessage());
         }
     }
 
@@ -47,7 +50,7 @@ public class AuthorDAO {
                 authors.add(author);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при получении авторов: {0}", e.getMessage());
         }
         return authors;
     }
@@ -63,7 +66,7 @@ public class AuthorDAO {
             pstmt.setInt(3, author.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при обновлении автора: {0}", e.getMessage());
         }
     }
 
@@ -76,7 +79,7 @@ public class AuthorDAO {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при удалении автора: {0}", e.getMessage());
         }
     }
 }

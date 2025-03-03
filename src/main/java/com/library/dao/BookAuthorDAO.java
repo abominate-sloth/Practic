@@ -5,14 +5,18 @@ import com.library.model.BookAuthor;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BookAuthorDAO {
-    private static final String url = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String user = "postgres";
-    private static final String password = "postgres";
+    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "postgres";
+    private static final Logger logger = Logger.getLogger(BookAuthorDAO.class.getName());
 
+    // Метод для подключения к базе данных
     private Connection connect() throws SQLException {
-        return DriverManager.getConnection(url, user, password);
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     // Добавление связи между книгой и автором
@@ -25,10 +29,11 @@ public class BookAuthorDAO {
             pstmt.setInt(2, bookAuthor.getAuthorId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при добавлении связи книги и автора: {0}", e.getMessage());
         }
     }
 
+    // Получение всех связей между книгами и авторами
     public List<BookAuthor> getAllBookAuthors() {
         List<BookAuthor> bookAuthors = new ArrayList<>();
         String sql = "SELECT * FROM bookauthors";
@@ -44,7 +49,7 @@ public class BookAuthorDAO {
                 bookAuthors.add(bookAuthor);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при получении связей между книгами и авторами: {0}", e.getMessage());
         }
         return bookAuthors;
     }
@@ -59,7 +64,7 @@ public class BookAuthorDAO {
             pstmt.setInt(2, authorId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при удалении связи книги и автора: {0}", e.getMessage());
         }
     }
 }
