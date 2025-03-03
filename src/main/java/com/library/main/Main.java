@@ -25,11 +25,11 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        ProcessMainMenu();
+        processMainMenu();
     }
 
     @SuppressWarnings("squid:S106")
-    public static void ProcessMainMenu() {
+    public static void processMainMenu() {
         String menu = """
                Выберите таблицу для работы:
                1. Авторы
