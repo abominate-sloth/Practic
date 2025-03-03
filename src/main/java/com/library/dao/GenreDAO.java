@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GenreDAO {
-    private final String url = "jdbc:postgresql://localhost:5432/postgres";
-    private final String user = "postgres";
-    private final String password = "postgres";
+    private static final String url = "jdbc:postgresql://localhost:5432/postgres";
+    private static final String user = "postgres";
+    private static final String password = "postgres";
 
     private Connection connect() throws SQLException {
         return DriverManager.getConnection(url, user, password);

@@ -4,28 +4,35 @@ import com.library.dao.*;
 import com.library.model.*;
 
 import java.sql.Date;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
+    private static final String subMenu ="1. Добавить запись\n" +
+            "2. Показать все записи\n" +
+            "3. Обновить запись\n" +
+            "4. Удалить запись\n" +
+            "5. Назад\n" +
+            "Ваш выбор: \n";
 
     public static void main(String[] args) {
         ProcessMainMenu();
     }
 
     public static void ProcessMainMenu() {
+        String menu ="Выберите таблицу для работы:\n" +
+                "1. Авторы\n" +
+                "2. Книги\n" +
+                "3. Жанры\n" +
+                "4. Читатели\n" +
+                "5. Выдачи книг\n" +
+                "6. Отзывы\n" +
+                "7. Связь книг и авторов\n" +
+                "8. Завершить работу\n" +
+                "Ваш выбор: ";
+
         while (true) {
-            System.out.println("Выберите таблицу для работы:");
-            System.out.println("1. Авторы");
-            System.out.println("2. Книги");
-            System.out.println("3. Жанры");
-            System.out.println("4. Читатели");
-            System.out.println("5. Выдачи книг");
-            System.out.println("6. Отзывы");
-            System.out.println("7. Связь книг и авторов");
-            System.out.println("8. Завершить работу");
-            System.out.print("Ваш выбор: ");
+            System.out.println(menu);
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // Очистка буфера
@@ -64,13 +71,7 @@ public class Main {
     // Методы для обработки меню каждой таблицы
     private static void processAuthorMenu() {
         AuthorDAO authorDAO = new AuthorDAO();
-        System.out.println("Работа с таблицей Авторы:");
-        System.out.println("1. Добавить автора");
-        System.out.println("2. Показать всех авторов");
-        System.out.println("3. Обновить автора");
-        System.out.println("4. Удалить автора");
-        System.out.println("5. Назад");
-        System.out.print("Ваш выбор: ");
+        System.out.print("Работа с таблицей Авторы\n" + subMenu);
 
         while (true) {
             int choice = scanner.nextInt();
@@ -130,13 +131,7 @@ public class Main {
 
     private static void processBookMenu() {
         BookDAO bookDAO = new BookDAO();
-        System.out.println("Работа с таблицей Книги:");
-        System.out.println("1. Добавить книгу");
-        System.out.println("2. Показать все книги");
-        System.out.println("3. Обновить книгу");
-        System.out.println("4. Удалить книгу");
-        System.out.println("5. Назад");
-        System.out.print("Ваш выбор: ");
+        System.out.print("Работа с таблицей Книги\n" + subMenu);
 
         while (true) {
             int choice = scanner.nextInt();
@@ -218,12 +213,7 @@ public class Main {
 
     private static void processGenreMenu() {
         GenreDAO genreDAO = new GenreDAO();
-        System.out.println("1. Добавить жанр");
-        System.out.println("2. Показать все жанры");
-        System.out.println("3. Обновить жанр");
-        System.out.println("4. Удалить жанр");
-        System.out.println("5. Назад");
-        System.out.print("Ваш выбор: ");
+        System.out.print("Работа с таблицей Жанры\n" + subMenu);
 
         while (true) {
             int choice = scanner.nextInt();
@@ -271,12 +261,7 @@ public class Main {
 
     private static void processReaderMenu() {
         ReaderDAO readerDAO = new ReaderDAO();
-        System.out.println("1. Добавить читателя");
-        System.out.println("2. Показать всех читателей");
-        System.out.println("3. Обновить читателя");
-        System.out.println("4. Удалить читателя");
-        System.out.println("5. Назад");
-        System.out.print("Ваш выбор: ");
+        System.out.print("Работа с таблицей Читателт\n" + subMenu);
 
         while (true) {
             int choice = scanner.nextInt();
@@ -341,12 +326,7 @@ public class Main {
 
     private static void processIssueMenu() {
         IssueDAO issueDAO = new IssueDAO();
-        System.out.println("1. Добавить выдачу книги");
-        System.out.println("2. Показать все выдачи книг");
-        System.out.println("3. Обновить выдачу книги");
-        System.out.println("4. Удалить выдачу книги");
-        System.out.println("5. Назад");
-        System.out.print("Ваш выбор: ");
+        System.out.print("Работа с таблицей Выдачи книг\n" + subMenu);
 
         while (true) {
             int choice = scanner.nextInt();
@@ -420,12 +400,8 @@ public class Main {
 
     private static void processReviewMenu() {
         ReviewDAO reviewDAO = new ReviewDAO();
-        System.out.println("1. Добавить отзыв");
-        System.out.println("2. Показать все отзывы");
-        System.out.println("3. Обновить отзыв");
-        System.out.println("4. Удалить отзыв");
-        System.out.println("5. Назад");
-        System.out.print("Ваш выбор: ");
+        System.out.print("Работа с таблицей Отзывы\n" + subMenu);
+
 
         while (true) {
             int choice = scanner.nextInt();
@@ -496,12 +472,8 @@ public class Main {
 
     private static void processBookAuthorMenu() {
         BookAuthorDAO bookAuthorDAO = new BookAuthorDAO();
-        System.out.println("Работа с таблицей Связь книг и авторов:");
-        System.out.println("1. Добавить связь книги и автора");
-        System.out.println("2. Показать все связи книг и авторов");
-        System.out.println("3. Удалить связь книги и автора");
-        System.out.println("4. Назад");
-        System.out.print("Ваш выбор: ");
+        System.out.print("Работа с таблицей Связь Книг и Авторов\n" + subMenu);
+
 
         while (true) {
             int choice = scanner.nextInt();
@@ -527,6 +499,9 @@ public class Main {
                     }
                     break;
                 case 3:
+                    System.out.print("Для данной таблицы доступны только добавление и удаление");
+                    break;
+                case 4:
                     System.out.print("Введите ID книги для удаления связи: ");
                     int deleteBookId = scanner.nextInt();
 
@@ -537,7 +512,7 @@ public class Main {
                     bookAuthorDAO.deleteBookAuthor(deleteBookId, deleteAuthorId);
                     System.out.println("Связь книги и автора успешно удалена!");
                     break;
-                case 4:
+                case 5:
                     return; // Возврат в главное меню
                 default:
                     System.out.println("Неверный выбор.");
