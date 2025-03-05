@@ -1,6 +1,8 @@
 package com.library.dao;
 
 import com.library.model.Issue;
+import com.library.model.IssueDetails;
+import com.library.model.BookDetails;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -37,26 +39,70 @@ public class IssueDAO {
     }
 
     // Получение всех выдач
-    public List<Issue> getAllIssues() {
-        List<Issue> issues = new ArrayList<>();
-        String sql = "SELECT * FROM issues";
+
+    public List<IssueDetails> getAllIssues() {
+        List<IssueDetails> issues = new ArrayList<>();
+        String sql = """
+    SELECT i.id, 
+           b.id AS book_id, b.title, g.name AS genre, a.name AS author,
+           i.reader_id, i.employee_id, i.issue_date, i.return_date
+    FROM issues i
+    JOIN books b ON i.book_id = b.id
+    LEFT JOIN genres g ON b.genre_id = g.id
+    LEFT JOIN bookauthors ba ON b.id = ba.book_id
+    LEFT JOIN authors a ON ba.author_id = a.id
+    """;
 
         try (Connection conn = connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
+            // Хранение книг по их id
+            List<BookDetails> books = new ArrayList<>();
             while (rs.next()) {
-                Issue issue = new Issue();
-                issue.setId(rs.getInt("id"));
-                issue.setBookId(rs.getInt("book_id"));
-                issue.setReaderId(rs.getInt("reader_id"));
-                issue.setEmployeeId(rs.getInt("employee_id")); // Получение employeeId
-                issue.setIssueDate(rs.getDate("issue_date"));
-                issue.setReturnDate(rs.getDate("return_date"));
-                issues.add(issue);
+                int bookId = rs.getInt("book_id");
+                String title = rs.getString("title");
+                String genre = rs.getString("genre");
+                String author = rs.getString("author");
+
+                // Поиск существующей книги
+                BookDetails bookDetails = books.stream()
+                        .filter(b -> b.getId() == bookId)
+                        .findFirst()
+                        .orElse(null);
+
+                // Если книга не найдена, создаем новую
+                if (bookDetails == null) {
+                    List<String> authors = new ArrayList<>();
+                    if (author != null) {
+                        authors.add(author); // Добавляем первого автора
+                    }
+                    bookDetails = new BookDetails(bookId, title, genre, authors);
+                    books.add(bookDetails);
+                } else {
+                    // Если книга уже существует, добавляем автора только если он не дубликат
+                    if (author != null && !bookDetails.getAuthors().contains(author)) {
+                        bookDetails.getAuthors().add(author);
+                    }
+                }
+
+                // Создаем объект IssueDetails
+                IssueDetails issue = new IssueDetails(
+                        rs.getInt("id"),
+                        bookDetails,
+                        rs.getInt("reader_id"),
+                        rs.getInt("employee_id"),
+                        rs.getDate("issue_date"),
+                        rs.getDate("return_date")
+                );
+
+                // Проверяем, нет ли дубликатов в списке issues
+                if (issues.stream().noneMatch(i -> i.getId() == issue.getId())) {
+                    issues.add(issue);
+                }
             }
         } catch (SQLException e) {
-            logger.log(Level.SEVERE, "Ошибка при получении всех выдач: {0}", e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при получении списка выдач: {0}", e.getMessage());
         }
         return issues;
     }

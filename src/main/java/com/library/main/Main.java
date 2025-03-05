@@ -49,7 +49,7 @@ public class Main {
                1. Авторы
                2. Книги
                3. Жанры
-               4. Читатели
+               4. Пользователи
                5. Выдачи книг
                6. Отзывы
                7. Связь книг и авторов
@@ -173,10 +173,6 @@ public class Main {
                     System.out.print("Введите название книги: ");
                     String title = SCANNER.nextLine();
 
-                    System.out.print("Введите ID автора (или оставьте пустым): ");
-                    String authorIdInput = SCANNER.nextLine();
-                    Integer authorId = convertOrNull(authorIdInput, Integer.class);
-
                     System.out.print("Введите ID жанра (или оставьте пустым): ");
                     String genreIdInput = SCANNER.nextLine();
                     Integer genreId = convertOrNull(genreIdInput, Integer.class);
@@ -193,7 +189,7 @@ public class Main {
                     int copiesAvailable = SCANNER.nextInt();
                     SCANNER.nextLine(); // Очистка буфера
 
-                    Book book = new Book(0, title, authorId, genreId, publishYear, finalIsbn, copiesAvailable);
+                    Book book = new Book(0, title, genreId, publishYear, finalIsbn, copiesAvailable);
                     System.out.println("Добавляем книгу....");
                     bookDAO.addBook(book);
                     System.out.println("Книга успешно добавлена!");
@@ -212,10 +208,6 @@ public class Main {
                     System.out.print("Введите новое название книги: ");
                     String newTitle = SCANNER.nextLine();
 
-                    System.out.print("Введите новый ID автора (или оставьте пустым): ");
-                    String newAuthorIdInput = SCANNER.nextLine();
-                    Integer newAuthorId = convertOrNull(newAuthorIdInput, Integer.class);
-
                     System.out.print("Введите новый ID жанра (или оставьте пустым): ");
                     String newGenreIdInput = SCANNER.nextLine();
                     Integer newGenreId = convertOrNull(newGenreIdInput, Integer.class);
@@ -232,7 +224,7 @@ public class Main {
                     int newCopiesAvailable = SCANNER.nextInt();
                     SCANNER.nextLine(); // Очистка буфера
 
-                    Book updatedBook = new Book(updateId, newTitle, newAuthorId, newGenreId, newPublishYear, finalNewIsbn, newCopiesAvailable);
+                    Book updatedBook = new Book(updateId, newTitle, newGenreId, newPublishYear, finalNewIsbn, newCopiesAvailable);
                     bookDAO.updateBook(updatedBook);
                     System.out.println("Книга успешно обновлена!");
                     break;
@@ -420,7 +412,7 @@ public class Main {
                     break;
                 case 2:
                     System.out.println("Список всех выдач книг:");
-                    for (Issue i : issueDAO.getAllIssues()) {
+                    for (IssueDetails i : issueDAO.getAllIssues()) {
                         System.out.println(i);
                     }
                     break;

@@ -3,7 +3,6 @@ package com.library.model;
 public class Book {
     private int id;
     private String title;
-    private Integer authorId; // Внешний ключ на таблицу Authors
     private Integer genreId;  // Внешний ключ на таблицу Genres
     private Integer publishYear;
     private String isbn;
@@ -12,10 +11,9 @@ public class Book {
     // Конструкторы
     public Book() {}
 
-    public Book(int id, String title, Integer authorId, Integer genreId, Integer publishYear, String isbn, int copiesAvailable) {
+    public Book(int id, String title, Integer genreId, Integer publishYear, String isbn, int copiesAvailable) {
         this.id = id;
         this.title = title;
-        this.authorId = authorId;
         this.genreId = genreId;
         this.publishYear = publishYear;
         this.isbn = isbn;
@@ -30,10 +28,6 @@ public class Book {
     public String getTitle() { return title; }
 
     public void setTitle(String title) { this.title = title; }
-
-    public Integer getAuthorId() { return authorId; }
-
-    public void setAuthorId(Integer authorId) { this.authorId = authorId; }
 
     public Integer getGenreId() { return genreId; }
 
@@ -56,11 +50,10 @@ public class Book {
         return "Book{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", authorId=" + authorId +
                 ", genreId=" + genreId +
                 ", publishYear=" + publishYear +
                 ", isbn='" + isbn + '\'' +
-                ", copiesAvailable=" + copiesAvailable +  // Добавлено в toString
+                ", copiesAvailable=" + copiesAvailable +
                 '}';
     }
 }
