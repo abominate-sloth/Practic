@@ -24,21 +24,27 @@ public class Issue {
 
     // Геттеры и сеттеры
     public int getId() { return id; }
+
     public void setId(int id) { this.id = id; }
 
     public int getBookId() { return bookId; }
+
     public void setBookId(int bookId) { this.bookId = bookId; }
 
     public int getReaderId() { return readerId; }
+
     public void setReaderId(int readerId) { this.readerId = readerId; }
 
-    public int getEmployeeId() { return employeeId; } // Новый геттер
-    public void setEmployeeId(int employeeId) { this.employeeId = employeeId; } // Новый сеттер
+    public int getEmployeeId() { return employeeId; }
+
+    public void setEmployeeId(int employeeId) { this.employeeId = employeeId; }
 
     public Date getIssueDate() { return issueDate; }
+
     public void setIssueDate(Date issueDate) { this.issueDate = issueDate; }
 
     public Date getReturnDate() { return returnDate; }
+
     public void setReturnDate(Date returnDate) { this.returnDate = returnDate; }
 
     @Override

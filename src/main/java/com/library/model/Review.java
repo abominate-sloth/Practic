@@ -20,18 +20,23 @@ public class Review {
 
     // Геттеры и сеттеры
     public int getId() { return id; }
+
     public void setId(int id) { this.id = id; }
 
     public int getBookId() { return bookId; }
+
     public void setBookId(int bookId) { this.bookId = bookId; }
 
     public int getReaderId() { return readerId; }
+
     public void setReaderId(int readerId) { this.readerId = readerId; }
 
     public int getRating() { return rating; }
+
     public void setRating(int rating) { this.rating = rating; }
 
     public String getComment() { return comment; }
+
     public void setComment(String comment) { this.comment = comment; }
 
     @Override

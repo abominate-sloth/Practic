@@ -125,3 +125,21 @@ ALTER TABLE IF EXISTS public.reviews
     REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
+
+ALTER TABLE books
+    DROP CONSTRAINT books_genre_id_fkey, -- Удаляем старое ограничение
+    ADD CONSTRAINT books_genre_id_fkey FOREIGN KEY (genre_id)
+    REFERENCES genres(id)
+    ON DELETE SET NULL; -- Устанавливаем genre_id в NULL при удалении жанра
+
+ALTER TABLE bookauthors
+    DROP CONSTRAINT bookauthors_book_id_fkey, -- Удаляем старое ограничение
+    ADD CONSTRAINT bookauthors_book_id_fkey FOREIGN KEY (book_id)
+    REFERENCES books(id)
+    ON DELETE CASCADE; -- Удаляем связанные записи при удалении книги
+
+ALTER TABLE bookauthors
+    DROP CONSTRAINT bookauthors_author_id_fkey, -- Удаляем старое ограничение
+    ADD CONSTRAINT bookauthors_author_id_fkey FOREIGN KEY (author_id)
+    REFERENCES authors(id)
+    ON DELETE CASCADE; -- Удаляем связанные записи при удалении автора
