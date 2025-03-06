@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS public.users
     password_hash character varying(255) COLLATE pg_catalog."default" NOT NULL,
     email character varying(100) COLLATE pg_catalog."default",
     join_date date,
-    role_id integer NOT NULL,
+    role_id integer,
     CONSTRAINT users_pkey PRIMARY KEY (id)
 );
 
@@ -158,3 +158,39 @@ ALTER TABLE bookauthors
     ADD CONSTRAINT bookauthors_author_id_fkey FOREIGN KEY (author_id)
     REFERENCES authors(id)
     ON DELETE CASCADE; -- Удаляем связанные записи при удалении автора
+
+ALTER TABLE issues
+    DROP CONSTRAINT issues_book_id_fkey, -- Удаляем старое ограничение
+    ADD CONSTRAINT issues_book_id_fkey FOREIGN KEY (book_id)
+    REFERENCES books(id)
+    ON DELETE CASCADE; -- Устанавливаем каскадное удаление
+
+ALTER TABLE issues
+    DROP CONSTRAINT issues_reader_id_fkey, -- Удаляем старое ограничение
+    ADD CONSTRAINT issues_reader_id_fkey FOREIGN KEY (reader_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE; -- Устанавливаем каскадное удаление
+
+ALTER TABLE issues
+    DROP CONSTRAINT issues_employee_id_fkey, -- Удаляем старое ограничение
+    ADD CONSTRAINT issues_employee_id_fkey FOREIGN KEY (employee_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE; -- Устанавливаем каскадное удаление
+
+ALTER TABLE reviews
+    DROP CONSTRAINT reviews_book_id_fkey, -- Удаляем старое ограничение
+    ADD CONSTRAINT reviews_book_id_fkey FOREIGN KEY (book_id)
+    REFERENCES books(id)
+    ON DELETE CASCADE; -- Устанавливаем каскадное удаление
+
+ALTER TABLE reviews
+    DROP CONSTRAINT reviews_reader_id_fkey, -- Удаляем старое ограничение
+    ADD CONSTRAINT reviews_reader_id_fkey FOREIGN KEY (reader_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE; -- Устанавливаем каскадное удаление
+
+ALTER TABLE users
+    DROP CONSTRAINT users_role_id_fkey, -- Удаляем старое ограничение
+    ADD CONSTRAINT users_role_id_fkey FOREIGN KEY (role_id)
+    REFERENCES roles(id)
+    ON DELETE SET NULL; -- Устанавливаем присвоение NULL при удалении роли

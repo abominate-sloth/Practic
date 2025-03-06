@@ -43,15 +43,15 @@ public class IssueDAO {
     public List<IssueDetails> getAllIssues() {
         List<IssueDetails> issues = new ArrayList<>();
         String sql = """
-    SELECT i.id, 
-           b.id AS book_id, b.title, g.name AS genre, a.name AS author,
-           i.reader_id, i.employee_id, i.issue_date, i.return_date
-    FROM issues i
-    JOIN books b ON i.book_id = b.id
-    LEFT JOIN genres g ON b.genre_id = g.id
-    LEFT JOIN bookauthors ba ON b.id = ba.book_id
-    LEFT JOIN authors a ON ba.author_id = a.id
-    """;
+                     SELECT i.id, 
+                            b.id AS book_id, b.title, g.name AS genre, a.name AS author,
+                            i.reader_id, i.employee_id, i.issue_date, i.return_date
+                     FROM issues i
+                     JOIN books b ON i.book_id = b.id
+                     LEFT JOIN genres g ON b.genre_id = g.id
+                     LEFT JOIN bookauthors ba ON b.id = ba.book_id
+                     LEFT JOIN authors a ON ba.author_id = a.id
+                     """;
 
         try (Connection conn = connect();
              Statement stmt = conn.createStatement();
