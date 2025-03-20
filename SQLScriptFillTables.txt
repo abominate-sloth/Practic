@@ -1,0 +1,51 @@
+BEGIN;
+
+-- Заполнение таблицы authors
+INSERT INTO public.authors (name, birth_date) VALUES
+('Author One', '1980-05-15'),
+('Author Two', '1975-08-20'),
+('Author Three', '1990-11-30');
+
+-- Заполнение таблицы genres
+INSERT INTO public.genres (name) VALUES
+('Fiction'),
+('Non-Fiction'),
+('Science Fiction');
+
+-- Заполнение таблицы books
+INSERT INTO public.books (title, genre_id, publish_year, isbn, copies_available) VALUES
+('Book One', 1, 2001, '1234567890123', 5),
+('Book Two', 2, 2005, '1234567890124', 3),
+('Book Three', 3, 2010, '1234567890125', 2);
+
+-- Заполнение таблицы roles
+INSERT INTO public.roles (role_name) VALUES
+('Admin'),
+('User'),
+('Guest');
+
+-- Заполнение таблицы users
+INSERT INTO public.users (username, password_hash, email, join_date, role_id) VALUES
+('user1', 'hash1', 'user1@example.com', '2022-01-01', 1),
+('user2', 'hash2', 'user2@example.com', '2022-02-01', 2),
+('user3', 'hash3', 'user3@example.com', '2022-03-01', 3);
+
+-- Заполнение таблицы bookauthors
+INSERT INTO public.bookauthors (book_id, author_id) VALUES
+(1, 1),
+(1, 2),
+(2, 3);
+
+-- Заполнение таблицы issues
+INSERT INTO public.issues (book_id, reader_id, employee_id, issue_date, return_date) VALUES
+(1, 1, 1, '2023-01-01', '2023-01-15'),
+(2, 2, 1, '2023-02-01', NULL),
+(3, 3, 2, '2023-03-05', '2023-03-20');
+
+-- Заполнение таблицы reviews
+INSERT INTO public.reviews (book_id, reader_id, rating, comment) VALUES
+(1, 1, 5, 'Excellent book!'),
+(2, 2, 4, 'Very informative.'),
+(3, 3, 3, 'It was okay.');
+
+COMMIT;
