@@ -26,7 +26,11 @@ public class AuthorDAO {
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, author.getName());
-            pstmt.setDate(2, author.getBirthDate());
+            if (author.getBirthDate() != null) {
+                pstmt.setDate(2, author.getBirthDate());
+            } else {
+                pstmt.setNull(2, Types.DATE); // Устанавливаем NULL для birthDate
+            }
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Ошибка при добавлении автора: {0}", e.getMessage());
@@ -62,12 +66,37 @@ public class AuthorDAO {
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, author.getName());
-            pstmt.setDate(2, author.getBirthDate());
+            if (author.getBirthDate() != null) {
+                pstmt.setDate(2, author.getBirthDate());
+            } else {
+                pstmt.setNull(2, Types.DATE); // Устанавливаем NULL для birthDate
+            }
             pstmt.setInt(3, author.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Ошибка при обновлении автора: {0}", e.getMessage());
         }
+    }
+
+    public Author getAuthorById(int id) {
+        String sql = "SELECT * FROM authors WHERE id = ?";
+        Author author = null;
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                author = new Author();
+                author.setId(rs.getInt("id"));
+                author.setName(rs.getString("name"));
+                author.setBirthDate(rs.getDate("birth_date"));
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Ошибка при получении автора: {0}", e.getMessage());
+        }
+        return author;
     }
 
     // Delete (Удаление автора)
