@@ -19,6 +19,15 @@ public class GenreDAO {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
+    // Статический блок для загрузки драйвера
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            logger.log(Level.SEVERE, "Ошибка загрузки драйвера: {0}", e.getMessage());
+        }
+    }
+
     // Добавление жанра
     public void addGenre(Genre genre) {
         String sql = "INSERT INTO genres (name) VALUES (?)";
@@ -65,6 +74,27 @@ public class GenreDAO {
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Ошибка при обновлении жанра: {0}", e.getMessage());
         }
+    }
+
+    // Получение жанра по ID
+    public Genre getGenreById(int id) {
+        String sql = "SELECT * FROM genres WHERE id = ?";
+        Genre genre = null;
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                genre = new Genre();
+                genre.setId(rs.getInt("id"));
+                genre.setName(rs.getString("name"));
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Ошибка при получении жанра: {0}", e.getMessage());
+        }
+        return genre;
     }
 
     // Удаление жанра
