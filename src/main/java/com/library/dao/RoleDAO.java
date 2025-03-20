@@ -67,6 +67,26 @@ public class RoleDAO {
         }
     }
 
+    public Role getRoleById(int id) {
+        String sql = "SELECT * FROM roles WHERE id = ?";
+        Role role = null;
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                role = new Role();
+                role.setId(rs.getInt("id"));
+                role.setRoleName(rs.getString("role_name"));
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Ошибка при получении роли: {0}", e.getMessage());
+        }
+        return role;
+    }
+
     // Удаление роли
     public void deleteRole(int id) {
         String sql = "DELETE FROM roles WHERE id = ?";

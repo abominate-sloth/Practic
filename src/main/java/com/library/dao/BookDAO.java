@@ -88,6 +88,30 @@ public class BookDAO {
         }
     }
 
+    public Book getBookById(int id) {
+        String sql = "SELECT * FROM books WHERE id = ?";
+        Book book = null;
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                book = new Book();
+                book.setId(rs.getInt("id"));
+                book.setTitle(rs.getString("title"));
+                book.setGenreId((Integer) rs.getObject("genre_id"));
+                book.setPublishYear((Integer) rs.getObject("publish_year"));
+                book.setIsbn(rs.getString("isbn"));
+                book.setCopiesAvailable(rs.getInt("copies_available"));
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Ошибка при получении книги: {0}", e.getMessage());
+        }
+        return book;
+    }
+
     // Удаление книги
     public void deleteBook(int id) {
         String sql = "DELETE FROM books WHERE id = ?";
