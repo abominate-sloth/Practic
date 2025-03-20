@@ -76,6 +76,29 @@ public class ReviewDAO {
         }
     }
 
+    public Review getReviewById(int id) {
+        String sql = "SELECT * FROM reviews WHERE id = ?";
+        Review review = null;
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                review = new Review();
+                review.setId(rs.getInt("id"));
+                review.setBookId(rs.getInt("book_id"));
+                review.setReaderId(rs.getInt("reader_id"));
+                review.setRating(rs.getInt("rating"));
+                review.setComment(rs.getString("comment")); // Комментарий может быть null
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Ошибка при получении отзыва: {0}", e.getMessage());
+        }
+        return review;
+    }
+
     // Удаление отзыва
     public void deleteReview(int id) {
         String sql = "DELETE FROM reviews WHERE id = ?";

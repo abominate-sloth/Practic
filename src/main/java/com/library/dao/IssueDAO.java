@@ -125,6 +125,30 @@ public class IssueDAO {
         }
     }
 
+    public Issue getIssueById(int id) {
+        String sql = "SELECT * FROM issues WHERE id = ?";
+        Issue issue = null;
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                issue = new Issue();
+                issue.setId(rs.getInt("id"));
+                issue.setBookId(rs.getInt("book_id"));
+                issue.setReaderId(rs.getInt("reader_id"));
+                issue.setEmployeeId(rs.getInt("employee_id"));
+                issue.setIssueDate(rs.getDate("issue_date"));
+                issue.setReturnDate(rs.getDate("return_date"));
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Ошибка при получении выдачи: {0}", e.getMessage());
+        }
+        return issue;
+    }
+
     // Удаление выдачи
     public void deleteIssue(int id) {
         String sql = "DELETE FROM issues WHERE id = ?";

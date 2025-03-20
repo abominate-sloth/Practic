@@ -79,6 +79,30 @@ public class UserDAO {
         }
     }
 
+    public User getUserById(int id) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        User user = null;
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                user = new User();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPasswordHash(rs.getString("password_hash"));
+                user.setEmail(rs.getString("email"));
+                user.setJoinDate(rs.getDate("join_date"));
+                user.setRoleId(rs.getInt("role_id"));
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Ошибка при получении пользователя: {0}", e.getMessage());
+        }
+        return user;
+    }
+
     // Удаление пользователя
     public void deleteUser(int id) {
         String sql = "DELETE FROM users WHERE id = ?";
