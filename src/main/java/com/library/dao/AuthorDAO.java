@@ -1,5 +1,6 @@
 package com.library.dao;
 
+import com.library.config.DatabaseConfig;
 import com.library.model.Author;
 
 import java.sql.*;
@@ -9,9 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class AuthorDAO {
-    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "postgres";
+    private static final String URL = DatabaseConfig.getUrl();
+    private static final String USER = DatabaseConfig.getUser();
+    private static final String PASSWORD = DatabaseConfig.getPassword();
     private static final Logger logger = Logger.getLogger(AuthorDAO.class.getName());
 
     // Метод для подключения к базе данных
