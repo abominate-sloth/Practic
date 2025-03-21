@@ -1,40 +1,34 @@
 package com.library.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.sql.Date;
+import java.util.Set;
 
+@Data // Lombok: автоматически генерирует геттеры, сеттеры, toString, equals и hashCode
+@NoArgsConstructor // Lombok: генерирует конструктор без аргументов
+@Entity // Указывает, что это сущность JPA
+@Table(name = "authors") // Указывает имя таблицы в базе данных
 public class Author {
+
+    @Id // Указывает, что это первичный ключ
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Автоматическая генерация ID
     private int id;
+
+    @Column(name = "name", nullable = false, length = 100) // Указывает имя столбца и его ограничения
     private String name;
-    private Date birthDate; // Используем java.sql.Date
 
-    // Конструкторы, геттеры и сеттеры
-    public Author() {}
+    @Column(name = "birth_date") // Дата рождения автора
+    private Date birthDate;
 
-    public Author(int id, String name, Date birthDate) {
-        this.id = id;
+    @ManyToMany(mappedBy = "authors") // Указывает на связь многие-ко-многим с Book
+    private Set<Book> books;
+
+    // Конструктор с параметрами (Lombok не генерирует его автоматически)
+    public Author(String name, Date birthDate) {
         this.name = name;
         this.birthDate = birthDate;
-    }
-
-    // Геттеры и сеттеры
-    public int getId() { return id; }
-
-    public void setId(int id) { this.id = id; }
-
-    public String getName() { return name; }
-
-    public void setName(String name) { this.name = name; }
-
-    public Date getBirthDate() { return birthDate; }
-
-    public void setBirthDate(Date birthDate) { this.birthDate = birthDate; }
-
-    @Override
-    public String toString() {
-        return "Author{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", birthDate=" + birthDate +
-                '}';
     }
 }

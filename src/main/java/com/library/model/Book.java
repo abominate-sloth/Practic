@@ -1,59 +1,51 @@
 package com.library.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Set;
+
+@Data // Lombok: автоматически генерирует геттеры, сеттеры, toString, equals и hashCode
+@NoArgsConstructor // Lombok: генерирует конструктор без аргументов
+@Entity // Указывает, что это сущность JPA
+@Table(name = "books") // Указывает имя таблицы в базе данных
 public class Book {
+
+    @Id // Указывает, что это первичный ключ
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Автоматическая генерация ID
     private int id;
+
+    @Column(name = "title", nullable = false, length = 255) // Указывает имя столбца и его ограничения
     private String title;
-    private Integer genreId;  // Внешний ключ на таблицу Genres
+
+    @ManyToOne // Указывает на связь многие-к-одному с Genre
+    @JoinColumn(name = "genre_id", nullable = true) // Внешний ключ на таблицу Genres
+    private Genre genre;
+
+    @Column(name = "publish_year") // Год публикации
     private Integer publishYear;
+
+    @Column(name = "isbn", length = 20) // ISBN книги
     private String isbn;
-    private int copiesAvailable; // Количество доступных экземпляров книги
 
-    // Конструкторы
-    public Book() {}
+    @Column(name = "copies_available", nullable = false) // Количество доступных экземпляров
+    private int copiesAvailable;
 
-    public Book(int id, String title, Integer genreId, Integer publishYear, String isbn, int copiesAvailable) {
-        this.id = id;
+    @ManyToMany // Указывает на связь многие-ко-многим с Author
+    @JoinTable(
+            name = "bookauthors", // Имя связующей таблицы
+            joinColumns = @JoinColumn(name = "book_id"), // Внешний ключ на таблицу Books
+            inverseJoinColumns = @JoinColumn(name = "author_id") // Внешний ключ на таблицу Authors
+    )
+    private Set<Author> authors;
+
+    // Конструктор с параметрами (Lombok не генерирует его автоматически)
+    public Book(String title, Genre genre, Integer publishYear, String isbn, int copiesAvailable) {
         this.title = title;
-        this.genreId = genreId;
+        this.genre = genre;
         this.publishYear = publishYear;
         this.isbn = isbn;
         this.copiesAvailable = copiesAvailable;
-    }
-
-    // Геттеры и сеттеры
-    public int getId() { return id; }
-
-    public void setId(int id) { this.id = id; }
-
-    public String getTitle() { return title; }
-
-    public void setTitle(String title) { this.title = title; }
-
-    public Integer getGenreId() { return genreId; }
-
-    public void setGenreId(Integer genreId) { this.genreId = genreId; }
-
-    public Integer getPublishYear() { return publishYear; }
-
-    public void setPublishYear(Integer publishYear) { this.publishYear = publishYear; }
-
-    public String getIsbn() { return isbn; }
-
-    public void setIsbn(String isbn) { this.isbn = isbn; }
-
-    public int getCopiesAvailable() { return copiesAvailable; }
-
-    public void setCopiesAvailable(int copiesAvailable) { this.copiesAvailable = copiesAvailable; }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", genreId=" + genreId +
-                ", publishYear=" + publishYear +
-                ", isbn='" + isbn + '\'' +
-                ", copiesAvailable=" + copiesAvailable +
-                '}';
     }
 }

@@ -1,60 +1,43 @@
 package com.library.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.sql.Date;
 
+@Data // Lombok: автоматически генерирует геттеры, сеттеры, toString, equals и hashCode
+@NoArgsConstructor // Lombok: генерирует конструктор без аргументов
+@Entity // Указывает, что это сущность JPA
+@Table(name = "users") // Указывает имя таблицы в базе данных
 public class User {
+
+    @Id // Указывает, что это первичный ключ
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Автоматическая генерация ID
     private int id;
-    private String username;         // Поле для логина
-    private String passwordHash;     // Поле для хэша пароля
+
+    @Column(name = "username", nullable = false, unique = true, length = 100) // Указывает имя столбца и его ограничения
+    private String username;
+
+    @Column(name = "password_hash", nullable = false, length = 255) // Хэш пароля
+    private String passwordHash;
+
+    @Column(name = "email", length = 100) // Электронная почта
     private String email;
+
+    @Column(name = "join_date") // Дата регистрации
     private Date joinDate;
-    private int roleId;             // Поле для идентификатора роли
 
-    // Конструкторы
-    public User() {}
+    @ManyToOne // Указывает на связь многие-к-одному с Role
+    @JoinColumn(name = "role_id", nullable = false) // Внешний ключ на таблицу Roles
+    private Role role;
 
-    public User(int id, String username, String passwordHash, String email, Date joinDate, int roleId) {
-        this.id = id;
+    // Конструктор с параметрами (Lombok не генерирует его автоматически)
+    public User(String username, String passwordHash, String email, Date joinDate, Role role) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.email = email;
         this.joinDate = joinDate;
-        this.roleId = roleId;
-    }
-
-    // Геттеры и сеттеры
-    public int getId() { return id; }
-
-    public void setId(int id) { this.id = id; }
-
-    public String getUsername() { return username; }
-
-    public void setUsername(String username) { this.username = username; }
-
-    public String getPasswordHash() { return passwordHash; }
-
-    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
-
-    public String getEmail() { return email; }
-
-    public void setEmail(String email) { this.email = email; }
-
-    public Date getJoinDate() { return joinDate; }
-
-    public void setJoinDate(Date joinDate) { this.joinDate = joinDate; }
-
-    public int getRoleId() { return roleId; }
-
-    public void setRoleId(int roleId) { this.roleId = roleId; }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", joinDate=" + joinDate +
-                ", roleId=" + roleId +
-                '}';
+        this.role = role;
     }
 }

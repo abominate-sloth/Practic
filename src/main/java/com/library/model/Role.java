@@ -1,31 +1,24 @@
 package com.library.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data // Lombok: автоматически генерирует геттеры, сеттеры, toString, equals и hashCode
+@NoArgsConstructor // Lombok: генерирует конструктор без аргументов
+@Entity // Указывает, что это сущность JPA
+@Table(name = "roles") // Указывает имя таблицы в базе данных
 public class Role {
+
+    @Id // Указывает, что это первичный ключ
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Автоматическая генерация ID
     private int id;
+
+    @Column(name = "role_name", nullable = false, unique = true, length = 50) // Указывает имя столбца и его ограничения
     private String roleName;
 
-    // Конструкторы
-    public Role() {}
-
-    public Role(int id, String roleName) {
-        this.id = id;
+    // Конструктор с параметрами (Lombok не генерирует его автоматически)
+    public Role(String roleName) {
         this.roleName = roleName;
-    }
-
-    // Геттеры и сеттеры
-    public int getId() { return id; }
-
-    public void setId(int id) { this.id = id; }
-
-    public String getRoleName() { return roleName; }
-
-    public void setRoleName(String roleName) { this.roleName = roleName; }
-
-    @Override
-    public String toString() {
-        return "Role{" +
-                "id=" + id +
-                ", roleName='" + roleName + '\'' +
-                '}';
     }
 }
