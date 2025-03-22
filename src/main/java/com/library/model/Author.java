@@ -23,9 +23,6 @@ public class Author {
     @Column(name = "birth_date") // Дата рождения автора
     private Date birthDate;
 
-    @ManyToMany(mappedBy = "authors") // Указывает на связь многие-ко-многим с Book
-    private Set<Book> books;
-
     // Конструктор с параметрами (Lombok не генерирует его автоматически)
     public Author(String name, Date birthDate) {
         this.name = name;
