@@ -34,7 +34,7 @@ public class Book {
 
     @ManyToMany // Указывает на связь многие-ко-многим с Author
     @JoinTable(
-            name = "book_authors", // Имя связующей таблицы
+            name = "bookauthors", // Имя связующей таблицы
             joinColumns = @JoinColumn(name = "book_id"), // Внешний ключ на таблицу Books
             inverseJoinColumns = @JoinColumn(name = "author_id") // Внешний ключ на таблицу Authors
     )
