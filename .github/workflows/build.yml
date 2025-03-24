@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - JDBC
+      - Backend_на_SpringBoot_+_Hibernate
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
