@@ -1,27 +1,50 @@
-<h1>{{ book.id ? 'Редактировать книгу' : 'Добавить книгу' }}</h1>
-<form (ngSubmit)="saveBook()">
-  <label>
-    Название:
-    <input [(ngModel)]="book.title" name="title" required />
-  </label>
-  <label>
-    ISBN:
-    <input [(ngModel)]="book.isbn" name="isbn" required />
-  </label>
-  <label>
-    Год издания:
-    <input [(ngModel)]="book.publishYear" name="publishYear" type="number" required />
-  </label>
-  <label>
-    Доступно копий:
-    <input [(ngModel)]="book.copiesAvailable" name="copiesAvailable" type="number" required />
-  </label>
-  <label>
-    Жанр:
-    <select [(ngModel)]="book.genreId" name="genreId" required>
-      <option *ngFor="let genre of genres" [value]="genre.id">{{ genre.name }}</option>
-    </select>
-  </label>
-  <button type="submit">Сохранить</button>
-</form>
-<a [routerLink]="['/books']">Назад к списку книг</a>
+<div class="book-form-container">
+  <h1>{{ book.id ? 'Редактировать книгу' : 'Добавить книгу' }}</h1>
+
+  <form (ngSubmit)="saveBook()">
+    <label>
+      Название:
+      <input [(ngModel)]="book.title" name="title" required>
+    </label>
+
+    <label>
+      Жанр:
+      <select [(ngModel)]="book.genreId" name="genreId" required>
+        <option *ngFor="let genre of genres" [value]="genre.id">
+          {{ genre.name }}
+        </option>
+      </select>
+    </label>
+
+    <label>
+      Год издания:
+      <input [(ngModel)]="book.publishYear" name="publishYear" type="number">
+    </label>
+
+    <label>
+      ISBN:
+      <input [(ngModel)]="book.isbn" name="isbn">
+    </label>
+
+    <label>
+      Доступно копий:
+      <input [(ngModel)]="book.copiesAvailable" name="copiesAvailable" type="number" min="0">
+    </label>
+
+    <div class="authors-section">
+      <h3>Авторы:</h3>
+      <div *ngFor="let author of allAuthors" class="author-checkbox">
+        <input
+          type="checkbox"
+          [id]="'author-' + author.id"
+          [checked]="isAuthorSelected(author.id)"
+          (change)="toggleAuthor(author.id)"
+        >
+        <label [for]="'author-' + author.id">{{ author.name }}</label>
+      </div>
+    </div>
+
+    <button type="submit">Сохранить</button>
+    <a routerLink="/books" class="cancel-btn">Отмена</a>
+  </form>
+</div>

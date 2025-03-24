@@ -1,15 +1,14 @@
-import {Genre} from '../models/genre.model'; // Импортируем интерфейсы
-import {Author} from '../models/author.model'; // Импортируем интерфейсы
+import { Genre } from './genre.model';
+import { Author } from './author.model';
 
 export interface Book {
   id: number;
   title: string;
-  genreId: number | null; // Идентификатор жанра
-  genre?: Genre | null; // Объект жанра (опционально, если нужен для отображения)
+  genreId: number | null;
+  genre?: Genre | null;
   publishYear: number;
   isbn: string;
   copiesAvailable: number;
-  authors: Author[]; // Авторы (массив объектов Author)
+  authors: Author[];
+  authorIds?: number[]; // Добавляем для отправки на бэкенд
 }
-
-

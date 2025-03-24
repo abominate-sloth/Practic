@@ -1,0 +1,19 @@
+<div class="author-form-container">
+  <h1>{{ author.id ? 'Редактировать автора' : 'Добавить автора' }}</h1>
+
+  <form (ngSubmit)="saveAuthor()">
+    <label>
+      Имя:
+      <input [(ngModel)]="author.name" name="name" required>
+    </label>
+
+    <label>
+      Дата рождения:
+      <input type="date" [(ngModel)]="author.birthDate" name="birthDate">
+    </label>
+
+    <button type="submit">Сохранить</button>
+  </form>
+
+  <a [routerLink]="['/authors']">Назад к списку авторов</a>
+</div>

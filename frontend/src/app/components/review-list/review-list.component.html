@@ -1,0 +1,26 @@
+<h1>Список отзывов</h1>
+<button [routerLink]="['/reviews/new']">Добавить отзыв</button>
+<table>
+  <thead>
+  <tr>
+    <th>Книга</th>
+    <th>Пользователь</th>
+    <th>Рейтинг</th>
+    <th>Комментарий</th>
+    <th>Действия</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let review of reviews">
+    <td>{{ review.book.title || 'Не указано' }}</td>
+    <td>{{ review.user.username || 'Не указано' }}</td> <!-- Изменили reader на user -->
+    <td>{{ review.rating }}/5</td>
+    <td>{{ review.comment || '-' }}</td>
+    <td>
+      <button [routerLink]="['/reviews', review.id, 'edit']">Редактировать</button>
+      <button (click)="deleteReview(review.id)">Удалить</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<a routerLink="/">Назад к списку таблиц</a>

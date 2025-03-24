@@ -1,0 +1,62 @@
+/* Заголовок */
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Кнопка добавления пользователя */
+button {
+  background-color: #4CAF50; /* Зеленый цвет */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+button:hover {
+  background-color: #45a049; /* Темнее при наведении */
+}
+
+/* Таблица */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+thead {
+  background-color: #f2f2f2; /* Светло-серый фон для заголовков */
+}
+
+th, td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9; /* Чередование фона строк */
+}
+
+tr:hover {
+  background-color: #f1f1f1; /* Цвет при наведении на строку */
+}
+
+/* Ссылки */
+a {
+  display: inline-block;
+  margin-top: 20px;
+  text-decoration: none;
+  color: #007BFF; /* Синий цвет */
+}
+
+a:hover {
+  text-decoration: underline; /* Подчёркивание при наведении */
+}
+
+/* Отступ между кнопками действий */
+td button {
+  margin-right: 10px; /* Отступ между кнопками */
+}

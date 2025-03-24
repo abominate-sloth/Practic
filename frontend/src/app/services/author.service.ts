@@ -1,33 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Book } from '../models/book.model';
+import { Author } from '../models/author.model';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class BookService {
-  private apiUrl = 'http://localhost:8080/api/books';
+export class AuthorService {
+  private apiUrl = 'http://localhost:8080/api/authors';
 
   constructor(private http: HttpClient) {}
 
-  getBooks(): Observable<Book[]> {
-    return this.http.get<Book[]>(this.apiUrl);
+  getAuthors(): Observable<Author[]> {
+    return this.http.get<Author[]>(this.apiUrl);
   }
 
-  getBook(id: number): Observable<Book> {
-    return this.http.get<Book>(`${this.apiUrl}/${id}`);
+  getAuthor(id: number): Observable<Author> {
+    return this.http.get<Author>(`${this.apiUrl}/${id}`);
   }
 
-  createBook(book: Book): Observable<Book> {
-    return this.http.post<Book>(this.apiUrl, book);
+  createAuthor(author: Author): Observable<Author> {
+    return this.http.post<Author>(this.apiUrl, author);
   }
 
-  updateBook(id: number, book: Book): Observable<Book> {
-    return this.http.put<Book>(`${this.apiUrl}/${id}`, book);
+  updateAuthor(id: number, author: Author): Observable<Author> {
+    return this.http.put<Author>(`${this.apiUrl}/${id}`, author);
   }
 
-  deleteBook(id: number): Observable<void> {
+  deleteAuthor(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

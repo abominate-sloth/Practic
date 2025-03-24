@@ -1,0 +1,77 @@
+<div class="review-form-container">
+  <h1>{{ reviewId ? 'Редактировать отзыв' : 'Добавить отзыв' }}</h1>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <form (ngSubmit)="saveReview()" *ngIf="!isLoading; else loading">
+    <div class="form-group">
+      <label for="bookId">Книга:</label>
+      <select
+        id="bookId"
+        [(ngModel)]="reviewData.bookId"
+        name="bookId"
+        required
+        [disabled]="isLoading"
+      >
+        <option *ngFor="let book of books" [value]="book.id">
+          {{ book.title }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="userId">Пользователь:</label>
+      <select
+        id="userId"
+        [(ngModel)]="reviewData.userId"
+        name="userId"
+        required
+        [disabled]="isLoading"
+      >
+        <option *ngFor="let user of users" [value]="user.id">
+          {{ user.username }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="rating">Рейтинг (1-5):</label>
+      <input
+        type="number"
+        id="rating"
+        [(ngModel)]="reviewData.rating"
+        name="rating"
+        min="1"
+        max="5"
+        required
+        [disabled]="isLoading"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="comment">Комментарий:</label>
+      <textarea
+        id="comment"
+        [(ngModel)]="reviewData.comment"
+        name="comment"
+        rows="4"
+        [disabled]="isLoading"
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="isLoading">
+        {{ reviewId ? 'Обновить' : 'Создать' }}
+      </button>
+      <a [routerLink]="['/reviews']" class="cancel-btn">Отмена</a>
+    </div>
+  </form>
+
+  <ng-template #loading>
+    <div class="loading-indicator">
+      <p>Загрузка...</p>
+    </div>
+  </ng-template>
+</div>

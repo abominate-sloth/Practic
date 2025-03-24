@@ -1,0 +1,28 @@
+<h1>Список выдач</h1>
+<button [routerLink]="['/issues/new']">Добавить выдачу</button>
+<table>
+  <thead>
+  <tr>
+    <th>Книга</th>
+    <th>Читатель</th>
+    <th>Сотрудник</th>
+    <th>Дата выдачи</th>
+    <th>Дата возврата</th>
+    <th>Действия</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let issue of issues">
+    <td>{{ issue.book.title }}</td>
+    <td>{{ issue.reader.username }}</td>
+    <td>{{ issue.employee.username }}</td>
+    <td>{{ issue.issueDate | date:'dd.MM.yyyy' }}</td>
+    <td>{{ issue.returnDate ? (issue.returnDate | date:'dd.MM.yyyy') : 'Не возвращено' }}</td>
+    <td>
+      <button [routerLink]="['/issues', issue.id, 'edit']">Редактировать</button>
+      <button (click)="deleteIssue(issue.id)">Удалить</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<a routerLink="/">Назад к списку таблиц</a>

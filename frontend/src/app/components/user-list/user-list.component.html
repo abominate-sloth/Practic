@@ -1,0 +1,28 @@
+<h1>Список пользователей</h1>
+<button [routerLink]="['/users/new']">Добавить пользователя</button>
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Логин</th>
+    <th>Email</th>
+    <th>Роль</th>
+    <th>Дата регистрации</th>
+    <th>Действия</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let user of users">
+    <td>{{ user.id }}</td>
+    <td>{{ user.username }}</td>
+    <td>{{ user.email || '-' }}</td>
+    <td>{{ user.role?.roleName || '-' }}</td>
+    <td>{{ user.joinDate | date:'dd.MM.yyyy' }}</td>
+    <td>
+      <button [routerLink]="['/users', user.id, 'edit']">Редактировать</button>
+      <button (click)="deleteUser(user.id)">Удалить</button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+<a routerLink="/">Назад к списку таблиц</a>

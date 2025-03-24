@@ -1,11 +1,10 @@
 /* Общий контейнер */
-.genre-form-container {
+.container {
   display: flex;
-  flex-direction: column;
-  align-items: center; /* Центрирование по горизонтали */
+  justify-content: center; /* Центрирование по горизонтали */
+  align-items: center; /* Центрирование по вертикали */
   height: 100vh; /* Полная высота экрана */
   background-color: #f9f9f9; /* Светлый фон для контраста */
-  padding: 20px; /* Отступы внутри контейнера */
 }
 
 /* Заголовок */
@@ -29,7 +28,7 @@ form {
 
 /* Поля ввода */
 label {
-  margin-bottom: 5px; /* Отступ между меткой и полем ввода */
+  margin-bottom: 10px; /* Отступ между меткой и полем ввода */
   font-weight: bold;
 }
 
@@ -58,7 +57,7 @@ button:hover {
 /* Ссылки */
 a {
   display: inline-block;
-  margin-top: 20px; /* Отступ сверху */
+  margin-top: 20px;
   text-decoration: none;
   color: #007BFF; /* Синий цвет */
 }
