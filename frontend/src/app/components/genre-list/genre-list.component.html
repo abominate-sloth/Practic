@@ -1,0 +1,10 @@
+<h1>Список жанров</h1>
+<button [routerLink]="['/genres/new']">Добавить жанр</button> <!-- Кнопка добавления -->
+<ul>
+  <li *ngFor="let genre of genres">
+    <h2>{{ genre.name }}</h2>
+    <button [routerLink]="['/genres', genre.id, 'edit']">Редактировать</button>
+    <button (click)="deleteGenre(genre.id)">Удалить</button>
+  </li>
+</ul>
+<a routerLink="/">Назад к списку таблиц</a>

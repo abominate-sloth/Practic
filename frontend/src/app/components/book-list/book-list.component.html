@@ -1,0 +1,19 @@
+<h1>Список книг</h1>
+<button [routerLink]="['/books/new']">Добавить книгу</button> <!-- Кнопка добавления -->
+<ul>
+  <li *ngFor="let book of books">
+    <h2>{{ book.title }}</h2>
+    <p>ISBN: {{ book.isbn }}</p>
+    <p>Год издания: {{ book.publishYear }}</p>
+    <p>Доступно копий: {{ book.copiesAvailable }}</p>
+    <p>Жанр: {{ book.genre?.name }}</p>
+    <p>Авторы:
+      <span *ngFor="let author of book.authors; let last = last">
+        {{ author.name }}<span *ngIf="!last">, </span>
+      </span>
+    </p>
+    <button [routerLink]="['/books', book.id, 'edit']">Редактировать</button>
+    <button (click)="deleteBook(book.id)">Удалить</button>
+  </li>
+</ul>
+<a routerLink="/">Назад к списку таблиц</a>

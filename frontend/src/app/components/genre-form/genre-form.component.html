@@ -1,0 +1,9 @@
+<h1>{{ genre.id ? 'Редактировать жанр' : 'Добавить жанр' }}</h1>
+<form (ngSubmit)="saveGenre()">
+  <label>
+    Название:
+    <input [(ngModel)]="genre.name" name="name" required />
+  </label>
+  <button type="submit">Сохранить</button>
+</form>
+<a [routerLink]="['/genres']">Назад к списку жанров</a>
