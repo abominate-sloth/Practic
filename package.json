@@ -19,16 +19,19 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "sonar": "sonar-scanner -Dsonar.organization=adeptsofsloth -Dsonar.projectKey=abominate-sloth_Practic_React -Dsonar.host.url=https://sonarcloud.io",
+    "sonar": "export SONAR_SCANNER_OPTS=\"-Djava.version=17\" && sonar-scanner -Dsonar.organization=adeptsofsloth -Dsonar.projectKey=abominate-sloth_Practic_React -Dsonar.host.url=https://sonarcloud.io -Dsonar.sourceEncoding=UTF-8 -Dsonar.login=$SONAR_TOKEN",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --max-warnings 0",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "npm run prepare"
   },
   "devDependencies": {
     "sonarqube-scanner": "^2.8.1",
     "eslint-plugin-sonarjs": "^0.23.0",
     "husky": "^8.0.3",
-    "lint-staged": "^13.2.3"
+    "lint-staged": "^13.2.3",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
   },
   "eslintConfig": {
     "extends": [
@@ -38,7 +41,8 @@
     "rules": {
       "sonarjs/cognitive-complexity": ["error", 15],
       "sonarjs/no-duplicate-string": "error",
-      "sonarjs/no-all-duplicated-branches": "error"
+      "sonarjs/no-all-duplicated-branches": "error",
+      "sonarjs/no-identical-functions": "error"
     }
   },
   "browserslist": {
@@ -55,7 +59,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
+      "eslint --fix --max-warnings 0",
       "git add"
     ]
   }
