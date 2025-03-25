@@ -19,8 +19,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "sonar": "sonar-scanner -Dsonar.java.version=17 -Dsonar.projectBaseDir=.",
-    "sonar:ci": "sonar-scanner -Dsonar.java.version=17 -Dsonar.projectBaseDir=. -Dsonar.login=$SONAR_TOKEN",
+    "sonar": "echo 'Please use GitHub Actions workflow instead'",
+    "sonar:ci": "echo 'Please use GitHub Actions workflow instead'",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --max-warnings 0",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "prepare": "husky install",
