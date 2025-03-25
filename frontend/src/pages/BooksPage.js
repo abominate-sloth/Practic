@@ -7,7 +7,7 @@ import {
   MenuItem, Select, InputLabel, FormControl, Chip,
   Autocomplete
 } from '@mui/material';
-import { Add, Edit, Delete } from '@mui/icons-material';
+import { Add, Edit, Delete, Search } from '@mui/icons-material';
 import {
   getBooks, createBook, updateBook, deleteBook,
   getGenres, getAuthors
@@ -15,6 +15,7 @@ import {
 
 const BooksPage = () => {
   const [books, setBooks] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
   const [genres, setGenres] = useState([]);
   const [authors, setAuthors] = useState([]);
   const [currentBook, setCurrentBook] = useState({
@@ -27,12 +28,18 @@ const BooksPage = () => {
   });
   const [openDialog, setOpenDialog] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedAuthor, setSelectedAuthor] = useState(null);
 
   useEffect(() => {
     fetchBooks();
     fetchGenres();
     fetchAuthors();
   }, []);
+
+  useEffect(() => {
+    filterBooks();
+  }, [books, searchTerm, selectedAuthor]);
 
   const fetchBooks = async () => {
     try {
@@ -61,8 +68,29 @@ const BooksPage = () => {
     }
   };
 
+  const filterBooks = () => {
+    let result = [...books];
+
+    // Фильтрация по названию
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(book =>
+        book.title.toLowerCase().includes(term)
+      );
+    }
+
+    // Фильтрация по автору
+    if (selectedAuthor) {
+      result = result.filter(book =>
+        book.authors?.some(author => author.id === selectedAuthor.id)
+      );
+    }
+
+    setFilteredBooks(result);
+  };
+
   const handleAddBook = async () => {
-    if (!currentBook.title.trim() || !currentBook.genreId || currentBook.authorIds.length === 0) return;
+    if (!currentBook.title.trim() || !currentBook.genreId || currentBook.authorIds.length === 0 || currentBook.copiesAvailable < 0) return;
 
     try {
       const bookData = {
@@ -82,7 +110,7 @@ const BooksPage = () => {
   };
 
   const handleUpdateBook = async () => {
-    if (!currentBook.title.trim() || !currentBook.genreId || currentBook.authorIds.length === 0) return;
+    if (!currentBook.title.trim() || !currentBook.genreId || currentBook.authorIds.length === 0 || currentBook.copiesAvailable < 0) return;
 
     try {
       const bookData = {
@@ -135,6 +163,11 @@ const BooksPage = () => {
     }).filter(name => name !== '');
   };
 
+  const resetFilters = () => {
+    setSearchTerm('');
+    setSelectedAuthor(null);
+  };
+
   return (
     <Box>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
@@ -159,6 +192,40 @@ const BooksPage = () => {
         </Button>
       </Box>
 
+      {/* Панель поиска и фильтрации */}
+      <Box display="flex" gap={2} mb={3}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Search by title..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: <Search sx={{ color: 'action.active', mr: 1 }} />
+          }}
+        />
+        <Autocomplete
+          sx={{ width: 300 }}
+          options={authors}
+          getOptionLabel={(option) => option.name}
+          value={selectedAuthor}
+          onChange={(e, newValue) => setSelectedAuthor(newValue)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Filter by author"
+              variant="outlined"
+            />
+          )}
+        />
+        <Button
+          variant="outlined"
+          onClick={resetFilters}
+        >
+          Reset Filters
+        </Button>
+      </Box>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -175,7 +242,7 @@ const BooksPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {books.map((book) => (
+            {filteredBooks.map((book) => (
               <TableRow key={book.id}>
                 <TableCell>{book.id}</TableCell>
                 <TableCell>{book.title}</TableCell>
@@ -234,7 +301,7 @@ const BooksPage = () => {
               title: e.target.value
             })}
           />
-          <FormControl fullWidth>
+          <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>Genre *</InputLabel>
             <Select
               value={currentBook.genreId}
@@ -303,10 +370,13 @@ const BooksPage = () => {
             label="Copies Available"
             type="number"
             value={currentBook.copiesAvailable}
-            onChange={(e) => setCurrentBook({
-              ...currentBook,
-              copiesAvailable: e.target.value
-            })}
+            onChange={(e) => {
+              const value = Math.max(0, e.target.value); // Валидация: не допускаем отрицательные значения
+              setCurrentBook({
+                ...currentBook,
+                copiesAvailable: value
+              });
+            }}
             inputProps={{ min: 0 }}
           />
         </DialogContent>
@@ -319,7 +389,8 @@ const BooksPage = () => {
             disabled={
               !currentBook.title ||
               !currentBook.genreId ||
-              currentBook.authorIds.length === 0
+              currentBook.authorIds.length === 0 ||
+              currentBook.copiesAvailable < 0 // Валидация: не допускаем отрицательные значения
             }
           >
             {isEditing ? 'Update' : 'Save'}

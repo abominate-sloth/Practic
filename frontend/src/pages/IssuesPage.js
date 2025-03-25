@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Typography, Button,
+  Box, Typography, Button, TextField,
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, IconButton,
   Dialog, DialogTitle, DialogContent, DialogActions,
-  MenuItem, Select, InputLabel, FormControl
+  MenuItem, Select, InputLabel, FormControl,
+  Autocomplete
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
@@ -16,6 +17,7 @@ import dayjs from 'dayjs';
 
 const IssuesPage = () => {
   const [issues, setIssues] = useState([]);
+  const [filteredIssues, setFilteredIssues] = useState([]);
   const [books, setBooks] = useState([]);
   const [users, setUsers] = useState([]);
   const [currentIssue, setCurrentIssue] = useState({
@@ -27,12 +29,18 @@ const IssuesPage = () => {
   });
   const [openDialog, setOpenDialog] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [bookFilter, setBookFilter] = useState(null);
+  const [readerFilter, setReaderFilter] = useState(null);
 
   useEffect(() => {
     fetchIssues();
     fetchBooks();
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    filterIssues();
+  }, [issues, bookFilter, readerFilter]);
 
   const fetchIssues = async () => {
     try {
@@ -59,6 +67,24 @@ const IssuesPage = () => {
     } catch (error) {
       console.error('Error fetching users:', error);
     }
+  };
+
+  const filterIssues = () => {
+    let result = [...issues];
+
+    if (bookFilter) {
+      result = result.filter(issue =>
+        issue.book?.id === bookFilter.id
+      );
+    }
+
+    if (readerFilter) {
+      result = result.filter(issue =>
+        issue.reader?.id === readerFilter.id
+      );
+    }
+
+    setFilteredIssues(result);
   };
 
   const handleAddIssue = async () => {
@@ -120,6 +146,11 @@ const IssuesPage = () => {
     setIsEditing(false);
   };
 
+  const resetFilters = () => {
+    setBookFilter(null);
+    setReaderFilter(null);
+  };
+
   const getBookTitleById = (bookId) => {
     const book = books.find(b => b.id === bookId);
     return book ? book.title : '-';
@@ -158,6 +189,43 @@ const IssuesPage = () => {
         </Button>
       </Box>
 
+      <Box display="flex" gap={2} mb={3} alignItems="center">
+        <Autocomplete
+          sx={{ width: 300 }}
+          options={books}
+          getOptionLabel={(option) => option.title}
+          value={bookFilter}
+          onChange={(e, newValue) => setBookFilter(newValue)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Filter by book"
+              variant="outlined"
+            />
+          )}
+        />
+        <Autocomplete
+          sx={{ width: 300 }}
+          options={users.filter(u => u.role?.roleName === 'User')}
+          getOptionLabel={(option) => option.username}
+          value={readerFilter}
+          onChange={(e, newValue) => setReaderFilter(newValue)}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Filter by reader"
+              variant="outlined"
+            />
+          )}
+        />
+        <Button
+          variant="outlined"
+          onClick={resetFilters}
+        >
+          Reset Filters
+        </Button>
+      </Box>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -172,7 +240,7 @@ const IssuesPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {issues.map((issue) => (
+            {filteredIssues.map((issue) => (
               <TableRow key={issue.id}>
                 <TableCell>{issue.id}</TableCell>
                 <TableCell>{issue.book?.title || getBookTitleById(issue.book?.id)}</TableCell>
@@ -205,11 +273,10 @@ const IssuesPage = () => {
         </Table>
       </TableContainer>
 
-      {/* Add/Edit Dialog */}
       <Dialog open={openDialog} onClose={resetForm} fullWidth maxWidth="sm">
         <DialogTitle>{isEditing ? 'Edit Issue' : 'Add New Issue'}</DialogTitle>
-        <DialogContent sx={{ pt: 2, '& > *': { my: 1 } }}>
-          <FormControl fullWidth>
+        <DialogContent sx={{ pt: 2, '& > *': { my: 2 } }}>
+          <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>Book *</InputLabel>
             <Select
               value={currentIssue.bookId}
@@ -226,7 +293,8 @@ const IssuesPage = () => {
               ))}
             </Select>
           </FormControl>
-          <FormControl fullWidth>
+
+          <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>Reader *</InputLabel>
             <Select
               value={currentIssue.readerId}
@@ -243,7 +311,8 @@ const IssuesPage = () => {
               ))}
             </Select>
           </FormControl>
-          <FormControl fullWidth>
+
+          <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>Employee *</InputLabel>
             <Select
               value={currentIssue.employeeId}
@@ -260,6 +329,7 @@ const IssuesPage = () => {
               ))}
             </Select>
           </FormControl>
+
           <DatePicker
             label="Issue Date"
             value={currentIssue.issueDate}
@@ -268,7 +338,9 @@ const IssuesPage = () => {
               issueDate: date
             })}
             slotProps={{ textField: { fullWidth: true } }}
+            sx={{ mb: 2 }}
           />
+
           <DatePicker
             label="Return Date"
             value={currentIssue.returnDate}
@@ -277,6 +349,7 @@ const IssuesPage = () => {
               returnDate: date
             })}
             slotProps={{ textField: { fullWidth: true } }}
+            sx={{ mb: 2 }}
           />
         </DialogContent>
         <DialogActions>
