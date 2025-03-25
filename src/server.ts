@@ -10,69 +10,83 @@ import { fileURLToPath } from 'node:url';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
+const indexHtmlPath = resolve(browserDistFolder, 'index.html');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-// Список маршрутов, которые должны рендериться на клиенте
-const CLIENT_SIDE_ROUTES = [
-  '/books/:id/edit',
-  '/genres/:id/edit',
-  '/authors/:id/edit',
-  '/roles/:id/edit',
-  '/users/:id/edit',
-  '/reviews/:id/edit',
-  '/issues/:id/edit'
-];
+// Оптимизированная проверка клиентских маршрутов
+const isClientRoute = (path: string): boolean => {
+  const clientRoutePatterns = [
+    /^\/books\/[^/]+\/edit$/,
+    /^\/genres\/[^/]+\/edit$/,
+    /^\/authors\/[^/]+\/edit$/,
+    /^\/roles\/[^/]+\/edit$/,
+    /^\/users\/[^/]+\/edit$/,
+    /^\/reviews\/[^/]+\/edit$/,
+    /^\/issues\/[^/]+\/edit$/
+  ];
+  return clientRoutePatterns.some(pattern => pattern.test(path));
+};
 
-/**
- * Serve static files from /browser
- */
+// Serve static files
 app.use(express.static(browserDistFolder, {
   maxAge: '1y',
   index: false,
   redirect: false,
+  fallthrough: true // Позволяет продолжить обработку если файл не найден
 }));
 
-/**
- * Middleware для проверки маршрутов
- */
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Server error:', err);
+  res.status(500).send('Internal Server Error');
+});
+
+// Client-side routes handler
 app.use((req, res, next) => {
-  // Проверяем, является ли маршрут клиентским
-  const isClientRoute = CLIENT_SIDE_ROUTES.some(route => {
-    const pattern = route.replace(/:\w+/g, '([^/]+)');
-    return new RegExp(`^${pattern}$`).test(req.path);
-  });
-
-  if (isClientRoute) {
-    // Для клиентских маршрутов просто отдаём index.html
-    return res.sendFile(resolve(browserDistFolder, 'index.html'));
+  if (isClientRoute(req.path)) {
+    return res.sendFile(indexHtmlPath, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    });
   }
-
-  // Для остальных - SSR
   next();
 });
 
-/**
- * Handle all other requests by rendering the Angular application
- */
+// SSR handler
 app.use('/**', (req, res, next) => {
   angularApp
     .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
-    .catch(next);
+    .then((response) => {
+      if (response) {
+        writeResponseToNodeResponse(response, res);
+      } else {
+        // Fallback to client-side rendering if SSR fails
+        res.sendFile(indexHtmlPath);
+      }
+    })
+    .catch((err) => {
+      console.error('SSR rendering error:', err);
+      // Fallback to client-side rendering on error
+      res.sendFile(indexHtmlPath);
+    });
 });
 
-/**
- * Start the server
- */
+// Server startup
 if (isMainModule(import.meta.url)) {
   const port = process.env['PORT'] || 4000;
   app.listen(port, () => {
-    console.log(`Node Express server listening on http://localhost:${port}`);
-    console.log(`Client-side routes: ${CLIENT_SIDE_ROUTES.join(', ')}`);
+    console.log(`Server running on http://localhost:${port}`);
+    console.log('Client-side routes:');
+    console.log('- /books/:id/edit');
+    console.log('- /genres/:id/edit');
+    console.log('- /authors/:id/edit');
+    console.log('- /roles/:id/edit');
+    console.log('- /users/:id/edit');
+    console.log('- /reviews/:id/edit');
+    console.log('- /issues/:id/edit');
   });
 }
 
