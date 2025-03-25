@@ -10,5 +10,6 @@ export interface Book {
   isbn: string;
   copiesAvailable: number;
   authors: Author[];
-  authorIds?: number[]; // Добавляем для отправки на бэкенд
+  authorIds?: number[];
+  averageRating?: number | null; // Добавляем новое поле
 }

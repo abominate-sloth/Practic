@@ -10,6 +10,7 @@
     <th>Доступно копий</th>
     <th>Жанр</th>
     <th>Авторы</th>
+    <th>Рейтинг</th> <!-- Новая колонка -->
     <th>Действия</th>
   </tr>
   </thead>
@@ -25,6 +26,14 @@
         <span *ngFor="let author of book.authors; let last = last">
           {{ author.name }}<span *ngIf="!last">, </span>
         </span>
+    </td>
+    <td>
+      <span *ngIf="book.averageRating !== null && book.averageRating !== undefined">
+        {{ book.averageRating | number:'1.1-1' }}
+      </span>
+      <span *ngIf="book.averageRating === null || book.averageRating === undefined">
+        Нет оценок
+      </span>
     </td>
     <td>
       <button [routerLink]="['/books', book.id, 'edit']">Редактировать</button>
