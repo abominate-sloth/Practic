@@ -2,17 +2,13 @@ package com.library.repository;
 
 import com.library.model.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-@Repository // Указывает, что это репозиторий
-public interface ReviewRepository extends JpaRepository<Review, Integer> {
-    // Spring Data JPA автоматически предоставляет CRUD-методы
-
-    // Кастомный метод для поиска отзывов по книге
-    List<Review> findByBookId(int bookId);
-
-    // Кастомный метод для поиска отзывов по читателю
-    List<Review> findByReaderId(int readerId);
+@Repository
+public interface ReviewRepository extends JpaRepository<Review, Integer>, JpaSpecificationExecutor<Review> {
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.book.id = :bookId")
+    Double findAverageRatingByBookId(@Param("bookId") Integer bookId);
 }

@@ -1,5 +1,7 @@
 package com.library.controller;
 
+import com.library.dto.GenreRequestDTO;
+import com.library.dto.GenreResponseDTO;
 import com.library.model.Genre;
 import com.library.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,61 +10,80 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@RestController // Указывает, что это контроллер, который возвращает данные в формате JSON
-@RequestMapping("/api/genres") // Базовый путь для всех методов в этом контроллере
+@RestController
+@RequestMapping("/api/genres")
 public class GenreController {
 
-    @Autowired // Внедряет сервис для работы с жанрами
-    private GenreService genreService;
+    private final GenreService genreService;
+
+    @Autowired
+    public GenreController(GenreService genreService) {
+        this.genreService = genreService;
+    }
 
     // Получить все жанры
     @GetMapping
-    public ResponseEntity<List<Genre>> getAllGenres() {
-        List<Genre> genres = genreService.getAllGenres();
-        return new ResponseEntity<>(genres, HttpStatus.OK);
+    public ResponseEntity<List<GenreResponseDTO>> getAllGenres(
+            @RequestParam(required = false) String name) {
+
+        List<Genre> genres = genreService.filterGenres(name);
+        List<GenreResponseDTO> dtos = genres.stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     // Получить жанр по ID
     @GetMapping("/{id}")
-    public ResponseEntity<Genre> getGenreById(@PathVariable int id) {
+    public ResponseEntity<GenreResponseDTO> getGenreById(@PathVariable int id) {
         Genre genre = genreService.getGenreById(id);
         if (genre != null) {
-            return new ResponseEntity<>(genre, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(convertToResponseDTO(genre), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Создать новый жанр
+    // Создать жанр
     @PostMapping
-    public ResponseEntity<Genre> createGenre(@RequestBody Genre genre) {
+    public ResponseEntity<GenreResponseDTO> createGenre(@RequestBody GenreRequestDTO genreDTO) {
+        Genre genre = convertToEntity(genreDTO);
         Genre createdGenre = genreService.saveGenre(genre);
-        return new ResponseEntity<>(createdGenre, HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToResponseDTO(createdGenre), HttpStatus.CREATED);
     }
 
-    // Обновить существующий жанр
+    // Обновить жанр
     @PutMapping("/{id}")
-    public ResponseEntity<Genre> updateGenre(@PathVariable int id, @RequestBody Genre genre) {
+    public ResponseEntity<GenreResponseDTO> updateGenre(
+            @PathVariable int id,
+            @RequestBody GenreRequestDTO genreDTO) {
+
         Genre existingGenre = genreService.getGenreById(id);
         if (existingGenre != null) {
-            genre.setId(id); // Убедимся, что ID обновляемого жанра совпадает с переданным
+            Genre genre = convertToEntity(genreDTO);
+            genre.setId(id);
             Genre updatedGenre = genreService.saveGenre(genre);
-            return new ResponseEntity<>(updatedGenre, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(convertToResponseDTO(updatedGenre), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Удалить жанр по ID
+    // Удалить жанр
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGenre(@PathVariable int id) {
-        Genre genre = genreService.getGenreById(id);
-        if (genre != null) {
-            genreService.deleteGenre(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        genreService.deleteGenre(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Методы преобразования
+    private Genre convertToEntity(GenreRequestDTO dto) {
+        Genre genre = new Genre();
+        genre.setName(dto.getName());
+        return genre;
+    }
+
+    private GenreResponseDTO convertToResponseDTO(Genre genre) {
+        return new GenreResponseDTO(genre.getId(), genre.getName());
     }
 }

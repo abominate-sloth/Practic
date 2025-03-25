@@ -1,89 +1,114 @@
 package com.library.controller;
 
+import com.library.dto.*;
 import com.library.model.Issue;
 import com.library.service.IssueService;
+import com.library.service.BookService;
+import com.library.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@RestController // Указывает, что это контроллер, который возвращает данные в формате JSON
-@RequestMapping("/api/issues") // Базовый путь для всех методов в этом контроллере
+@RestController
+@RequestMapping("/api/issues")
 public class IssueController {
 
-    @Autowired // Внедряет сервис для работы с выдачами
-    private IssueService issueService;
+    private final IssueService issueService;
+    private final BookService bookService;
+    private final UserService userService;
 
-    // Получить все выдачи
+    @Autowired
+    public IssueController(IssueService issueService, BookService bookService, UserService userService) {
+        this.issueService = issueService;
+        this.bookService = bookService;
+        this.userService = userService;
+    }
+
+    // Фильтрация выдач
     @GetMapping
-    public ResponseEntity<List<Issue>> getAllIssues() {
-        List<Issue> issues = issueService.getAllIssues();
-        return new ResponseEntity<>(issues, HttpStatus.OK);
+    public ResponseEntity<List<IssueResponseDTO>> filterIssues(
+            @RequestParam(required = false) Integer bookId,
+            @RequestParam(required = false) Integer readerId,
+            @RequestParam(required = false) Integer employeeId,
+            @RequestParam(required = false) Date issueDate,
+            @RequestParam(required = false) Date returnDate) {
+
+        List<Issue> issues = issueService.filterIssues(bookId, readerId, employeeId, issueDate, returnDate);
+        List<IssueResponseDTO> dtos = issues.stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     // Получить выдачу по ID
     @GetMapping("/{id}")
-    public ResponseEntity<Issue> getIssueById(@PathVariable int id) {
+    public ResponseEntity<IssueResponseDTO> getIssueById(@PathVariable Integer id) {
         Issue issue = issueService.getIssueById(id);
         if (issue != null) {
-            return new ResponseEntity<>(issue, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(convertToResponseDTO(issue), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Получить выдачи по книге
-    @GetMapping("/book/{bookId}")
-    public ResponseEntity<List<Issue>> getIssuesByBook(@PathVariable int bookId) {
-        List<Issue> issues = issueService.getIssuesByBook(bookId);
-        return new ResponseEntity<>(issues, HttpStatus.OK);
-    }
-
-    // Получить выдачи по читателю
-    @GetMapping("/reader/{readerId}")
-    public ResponseEntity<List<Issue>> getIssuesByReader(@PathVariable int readerId) {
-        List<Issue> issues = issueService.getIssuesByReader(readerId);
-        return new ResponseEntity<>(issues, HttpStatus.OK);
-    }
-
-    // Получить выдачи по сотруднику
-    @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<Issue>> getIssuesByEmployee(@PathVariable int employeeId) {
-        List<Issue> issues = issueService.getIssuesByEmployee(employeeId);
-        return new ResponseEntity<>(issues, HttpStatus.OK);
-    }
-
-    // Создать новую выдачу
+    // Создать выдачу
     @PostMapping
-    public ResponseEntity<Issue> createIssue(@RequestBody Issue issue) {
+    public ResponseEntity<IssueResponseDTO> createIssue(@RequestBody IssueRequestDTO issueDTO) {
+        Issue issue = convertToEntity(issueDTO);
         Issue createdIssue = issueService.saveIssue(issue);
-        return new ResponseEntity<>(createdIssue, HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToResponseDTO(createdIssue), HttpStatus.CREATED);
     }
 
-    // Обновить существующую выдачу
+    // Обновить выдачу
     @PutMapping("/{id}")
-    public ResponseEntity<Issue> updateIssue(@PathVariable int id, @RequestBody Issue issue) {
+    public ResponseEntity<IssueResponseDTO> updateIssue(
+            @PathVariable Integer id,
+            @RequestBody IssueRequestDTO issueDTO) {
+
         Issue existingIssue = issueService.getIssueById(id);
         if (existingIssue != null) {
-            issue.setId(id); // Убедимся, что ID обновляемой выдачи совпадает с переданным
+            Issue issue = convertToEntity(issueDTO);
+            issue.setId(id);
             Issue updatedIssue = issueService.saveIssue(issue);
-            return new ResponseEntity<>(updatedIssue, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(convertToResponseDTO(updatedIssue), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Удалить выдачу по ID
+    // Удалить выдачу
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteIssue(@PathVariable int id) {
-        Issue issue = issueService.getIssueById(id);
-        if (issue != null) {
-            issueService.deleteIssue(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Void> deleteIssue(@PathVariable Integer id) {
+        issueService.deleteIssue(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Методы преобразования
+    private Issue convertToEntity(IssueRequestDTO dto) {
+        Issue issue = new Issue();
+        issue.setBook(bookService.getBookById(dto.getBookId()));
+        issue.setReader(userService.getUserById(dto.getReaderId()));
+        issue.setEmployee(userService.getUserById(dto.getEmployeeId()));
+        issue.setIssueDate(dto.getIssueDate());
+        issue.setReturnDate(dto.getReturnDate());
+        return issue;
+    }
+
+    private IssueResponseDTO convertToResponseDTO(Issue issue) {
+        BookSimpleDTO bookDTO = new BookSimpleDTO(issue.getBook().getId(), issue.getBook().getTitle());
+        UserSimpleDTO readerDTO = new UserSimpleDTO(issue.getReader().getId(), issue.getReader().getUsername());
+        UserSimpleDTO employeeDTO = new UserSimpleDTO(issue.getEmployee().getId(), issue.getEmployee().getUsername());
+
+        return new IssueResponseDTO(
+                issue.getId(),
+                bookDTO,
+                readerDTO,
+                employeeDTO,
+                issue.getIssueDate(),
+                issue.getReturnDate()
+        );
     }
 }

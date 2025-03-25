@@ -1,5 +1,7 @@
 package com.library.controller;
 
+import com.library.dto.RoleRequestDTO;
+import com.library.dto.RoleResponseDTO;
 import com.library.model.Role;
 import com.library.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,72 +10,82 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@RestController // Указывает, что это контроллер, который возвращает данные в формате JSON
-@RequestMapping("/api/roles") // Базовый путь для всех методов в этом контроллере
+@RestController
+@RequestMapping("/api/roles")
 public class RoleController {
 
-    @Autowired // Внедряет сервис для работы с ролями
-    private RoleService roleService;
+    private final RoleService roleService;
 
-    // Получить все роли
-    @GetMapping
-    public ResponseEntity<List<Role>> getAllRoles() {
-        List<Role> roles = roleService.getAllRoles();
-        return new ResponseEntity<>(roles, HttpStatus.OK);
+    @Autowired
+    public RoleController(RoleService roleService) {
+        this.roleService = roleService;
     }
 
-    // Получить роль по ID
+    // Фильтрация ролей (возвращает DTO)
+    @GetMapping
+    public ResponseEntity<List<RoleResponseDTO>> filterRoles(@RequestParam(required = false) String roleName) {
+        List<Role> roles = roleService.filterRoles(roleName);
+        List<RoleResponseDTO> responseDTOs = roles.stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(responseDTOs, HttpStatus.OK);
+    }
+
+    // Получить роль по ID (возвращает DTO)
     @GetMapping("/{id}")
-    public ResponseEntity<Role> getRoleById(@PathVariable int id) {
+    public ResponseEntity<RoleResponseDTO> getRoleById(@PathVariable int id) {
         Role role = roleService.getRoleById(id);
         if (role != null) {
-            return new ResponseEntity<>(role, HttpStatus.OK);
+            return new ResponseEntity<>(convertToResponseDTO(role), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Получить роль по имени
-    @GetMapping("/name/{roleName}")
-    public ResponseEntity<Role> getRoleByName(@PathVariable String roleName) {
-        Role role = roleService.getRoleByName(roleName);
-        if (role != null) {
-            return new ResponseEntity<>(role, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    // Создать новую роль
+    // Создать роль (принимает DTO)
     @PostMapping
-    public ResponseEntity<Role> createRole(@RequestBody Role role) {
+    public ResponseEntity<RoleResponseDTO> createRole(@RequestBody RoleRequestDTO roleDTO) {
+        Role role = convertToEntity(roleDTO);
         Role createdRole = roleService.saveRole(role);
-        return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToResponseDTO(createdRole), HttpStatus.CREATED);
     }
 
-    // Обновить существующую роль
+    // Обновить роль (принимает DTO)
     @PutMapping("/{id}")
-    public ResponseEntity<Role> updateRole(@PathVariable int id, @RequestBody Role role) {
+    public ResponseEntity<RoleResponseDTO> updateRole(@PathVariable int id, @RequestBody RoleRequestDTO roleDTO) {
         Role existingRole = roleService.getRoleById(id);
         if (existingRole != null) {
-            role.setId(id); // Убедимся, что ID обновляемой роли совпадает с переданным
+            Role role = convertToEntity(roleDTO);
+            role.setId(id); // Устанавливаем ID для обновления
             Role updatedRole = roleService.saveRole(role);
-            return new ResponseEntity<>(updatedRole, HttpStatus.OK);
+            return new ResponseEntity<>(convertToResponseDTO(updatedRole), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Удалить роль по ID
+    // Удаление роли (остается без изменений)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRole(@PathVariable int id) {
         Role role = roleService.getRoleById(id);
         if (role != null) {
             roleService.deleteRole(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    // --- Методы преобразования ---
+    private Role convertToEntity(RoleRequestDTO dto) {
+        Role role = new Role();
+        role.setRoleName(dto.getRoleName());
+        return role;
+    }
+
+    private RoleResponseDTO convertToResponseDTO(Role role) {
+        return new RoleResponseDTO(role.getId(), role.getRoleName());
     }
 }

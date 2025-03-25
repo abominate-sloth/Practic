@@ -1,5 +1,7 @@
 package com.library.controller;
 
+import com.library.dto.AuthorRequestDTO;
+import com.library.dto.AuthorResponseDTO;
 import com.library.model.Author;
 import com.library.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,69 +9,92 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@RestController // Указывает, что это контроллер, который возвращает данные в формате JSON
-@RequestMapping("/api/authors") // Базовый путь для всех методов в этом контроллере
+@RestController
+@RequestMapping("/api/authors")
 public class AuthorController {
 
-    @Autowired // Внедряет сервис для работы с авторами
-    private AuthorService authorService;
+    private final AuthorService authorService;
 
-    // Получить всех авторов
-    @GetMapping
-    public ResponseEntity<List<Author>> getAllAuthors() {
-        List<Author> authors = authorService.getAllAuthors();
-        return new ResponseEntity<>(authors, HttpStatus.OK);
+    @Autowired
+    public AuthorController(AuthorService authorService) {
+        this.authorService = authorService;
     }
 
-    // Получить автора по ID
+    // Фильтрация авторов (возвращает DTO)
+    @GetMapping
+    public ResponseEntity<List<AuthorResponseDTO>> filterAuthors(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Date birthDate) {
+
+        List<Author> authors = authorService.filterAuthors(name, birthDate);
+        List<AuthorResponseDTO> responseDTOs = authors.stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(responseDTOs, HttpStatus.OK);
+    }
+
+    // Получить автора по ID (возвращает DTO)
     @GetMapping("/{id}")
-    public ResponseEntity<Author> getAuthorById(@PathVariable int id) {
+    public ResponseEntity<AuthorResponseDTO> getAuthorById(@PathVariable int id) {
         Author author = authorService.getAuthorById(id);
         if (author != null) {
-            return new ResponseEntity<>(author, HttpStatus.OK);
+            return new ResponseEntity<>(convertToResponseDTO(author), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Получить авторов по имени
-    @GetMapping("/name/{name}")
-    public ResponseEntity<List<Author>> getAuthorsByName(@PathVariable String name) {
-        List<Author> authors = authorService.getAuthorsByName(name);
-        return new ResponseEntity<>(authors, HttpStatus.OK);
-    }
-
-    // Создать нового автора
+    // Создать автора (принимает DTO)
     @PostMapping
-    public ResponseEntity<Author> createAuthor(@RequestBody Author author) {
+    public ResponseEntity<AuthorResponseDTO> createAuthor(@RequestBody AuthorRequestDTO authorDTO) {
+        Author author = convertToEntity(authorDTO);
         Author createdAuthor = authorService.saveAuthor(author);
-        return new ResponseEntity<>(createdAuthor, HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToResponseDTO(createdAuthor), HttpStatus.CREATED);
     }
 
-    // Обновить существующего автора
+    // Обновить автора (принимает DTO)
     @PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthor(@PathVariable int id, @RequestBody Author author) {
+    public ResponseEntity<AuthorResponseDTO> updateAuthor(@PathVariable int id, @RequestBody AuthorRequestDTO authorDTO) {
         Author existingAuthor = authorService.getAuthorById(id);
         if (existingAuthor != null) {
-            author.setId(id); // Убедимся, что ID обновляемого автора совпадает с переданным
+            Author author = convertToEntity(authorDTO);
+            author.setId(id); // Устанавливаем ID для обновления
             Author updatedAuthor = authorService.saveAuthor(author);
-            return new ResponseEntity<>(updatedAuthor, HttpStatus.OK);
+            return new ResponseEntity<>(convertToResponseDTO(updatedAuthor), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    // Удалить автора по ID
+    // Удаление автора (остается без изменений)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAuthor(@PathVariable int id) {
         Author author = authorService.getAuthorById(id);
         if (author != null) {
             authorService.deleteAuthor(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    // --- Методы преобразования ---
+    private Author convertToEntity(AuthorRequestDTO dto) {
+        Author author = new Author();
+        author.setName(dto.getName());
+        author.setBirthDate(dto.getBirthDate());
+        return author;
+    }
+
+    private AuthorResponseDTO convertToResponseDTO(Author author) {
+        return new AuthorResponseDTO(
+                author.getId(),
+                author.getName(),
+                author.getBirthDate()
+        );
     }
 }

@@ -1,82 +1,134 @@
 package com.library.controller;
 
+import com.library.dto.*;
+import com.library.model.Author;
 import com.library.model.Book;
 import com.library.service.BookService;
+import com.library.service.GenreService;
+import com.library.service.AuthorService;
+import com.library.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@RestController // Указывает, что это контроллер, который возвращает данные в формате JSON
-@RequestMapping("/api/books") // Базовый путь для всех методов в этом контроллере
+@RestController
+@RequestMapping("/api/books")
 public class BookController {
 
-    @Autowired // Внедряет сервис для работы с книгами
-    private BookService bookService;
+    private final BookService bookService;
+    private final GenreService genreService;
+    private final AuthorService authorService;
+    private final ReviewService reviewService;
 
-    // Получить все книги
+    @Autowired
+    public BookController(BookService bookService, GenreService genreService, AuthorService authorService, ReviewService reviewService) {
+        this.bookService = bookService;
+        this.genreService = genreService;
+        this.authorService = authorService;
+        this.reviewService = reviewService;
+    }
+
+    // Фильтрация книг
     @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = bookService.getAllBooks();
-        return new ResponseEntity<>(books, HttpStatus.OK);
+    public ResponseEntity<List<BookResponseDTO>> filterBooks(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Integer genreId,
+            @RequestParam(required = false) Integer publishYear,
+            @RequestParam(required = false) String isbn,
+            @RequestParam(required = false) Integer copiesAvailable) {
+
+        List<Book> books = bookService.filterBooks(title, genreId, publishYear, isbn, copiesAvailable);
+        List<BookResponseDTO> dtos = books.stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     // Получить книгу по ID
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable int id) {
+    public ResponseEntity<BookResponseDTO> getBookById(@PathVariable int id) {
         Book book = bookService.getBookById(id);
         if (book != null) {
-            return new ResponseEntity<>(book, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(convertToResponseDTO(book), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Получить книги по названию
-    @GetMapping("/title/{title}")
-    public ResponseEntity<List<Book>> getBooksByTitle(@PathVariable String title) {
-        List<Book> books = bookService.getBooksByTitle(title);
-        return new ResponseEntity<>(books, HttpStatus.OK);
-    }
-
-    // Получить книги по жанру
-    @GetMapping("/genre/{genreId}")
-    public ResponseEntity<List<Book>> getBooksByGenre(@PathVariable int genreId) {
-        List<Book> books = bookService.getBooksByGenre(genreId);
-        return new ResponseEntity<>(books, HttpStatus.OK);
-    }
-
-    // Создать новую книгу
+    // Создать книгу
     @PostMapping
-    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+    public ResponseEntity<BookResponseDTO> createBook(@RequestBody BookRequestDTO bookDTO) {
+        Book book = convertToEntity(bookDTO);
         Book createdBook = bookService.saveBook(book);
-        return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToResponseDTO(createdBook), HttpStatus.CREATED);
     }
 
-    // Обновить существующую книгу
+    // Обновить книгу
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable int id, @RequestBody Book book) {
+    public ResponseEntity<BookResponseDTO> updateBook(
+            @PathVariable int id,
+            @RequestBody BookRequestDTO bookDTO) {
+
         Book existingBook = bookService.getBookById(id);
         if (existingBook != null) {
-            book.setId(id); // Убедимся, что ID обновляемой книги совпадает с переданным
+            Book book = convertToEntity(bookDTO);
+            book.setId(id);
             Book updatedBook = bookService.saveBook(book);
-            return new ResponseEntity<>(updatedBook, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(convertToResponseDTO(updatedBook), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Удалить книгу по ID
+    // Удалить книгу
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable int id) {
-        Book book = bookService.getBookById(id);
-        if (book != null) {
-            bookService.deleteBook(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        bookService.deleteBook(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Методы преобразования
+    private Book convertToEntity(BookRequestDTO dto) {
+        Book book = new Book();
+        book.setTitle(dto.getTitle());
+        book.setGenre(genreService.getGenreById(dto.getGenreId()));
+        book.setPublishYear(dto.getPublishYear());
+        book.setIsbn(dto.getIsbn());
+        book.setCopiesAvailable(dto.getCopiesAvailable());
+
+        // Установка авторов
+        Set<Author> authors = dto.getAuthorIds().stream()
+                .map(authorId -> authorService.getAuthorById(authorId))
+                .collect(Collectors.toSet());
+        book.setAuthors(authors);
+
+        return book;
+    }
+
+    private BookResponseDTO convertToResponseDTO(Book book) {
+        GenreResponseDTO genreDTO = null;
+        if (book.getGenre() != null) {
+            genreDTO = new GenreResponseDTO(book.getGenre().getId(), book.getGenre().getName());
         }
+
+        // Преобразование авторов
+        Set<AuthorResponseDTO> authorDTOs = book.getAuthors().stream()
+                .map(author -> new AuthorResponseDTO(author.getId(), author.getName(), author.getBirthDate()))
+                .collect(Collectors.toSet());
+
+        // Создаем объект BookResponseDTO через конструктор
+        return new BookResponseDTO(
+                book.getId(),
+                book.getTitle(),
+                genreDTO,
+                book.getPublishYear(),
+                book.getIsbn(),
+                book.getCopiesAvailable(),
+                authorDTOs,
+                reviewService.getAverageRatingForBook(book.getId())
+        );
     }
 }

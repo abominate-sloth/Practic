@@ -23,7 +23,10 @@ public class Author {
     @Column(name = "birth_date") // Дата рождения автора
     private Date birthDate;
 
-    // Конструктор с параметрами (Lombok не генерирует его автоматически)
+//    @ManyToMany(mappedBy = "authors")
+//    private Set<Book> books;
+
+// Конструктор с параметрами (Lombok не генерирует его автоматически)
     public Author(String name, Date birthDate) {
         this.name = name;
         this.birthDate = birthDate;

@@ -1,82 +1,108 @@
 package com.library.controller;
 
+import com.library.dto.*;
 import com.library.model.Review;
 import com.library.service.ReviewService;
+import com.library.service.BookService;
+import com.library.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@RestController // Указывает, что это контроллер, который возвращает данные в формате JSON
-@RequestMapping("/api/reviews") // Базовый путь для всех методов в этом контроллере
+@RestController
+@RequestMapping("/api/reviews")
 public class ReviewController {
 
-    @Autowired // Внедряет сервис для работы с отзывами
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
+    private final BookService bookService;
+    private final UserService userService;
 
-    // Получить все отзывы
+    @Autowired
+    public ReviewController(ReviewService reviewService, BookService bookService, UserService userService) {
+        this.reviewService = reviewService;
+        this.bookService = bookService;
+        this.userService = userService;
+    }
+
+    // Фильтрация отзывов
     @GetMapping
-    public ResponseEntity<List<Review>> getAllReviews() {
-        List<Review> reviews = reviewService.getAllReviews();
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    public ResponseEntity<List<ReviewResponseDTO>> filterReviews(
+            @RequestParam(required = false) Integer bookId,
+            @RequestParam(required = false) Integer userId,
+            @RequestParam(required = false) Integer rating) {
+
+        List<Review> reviews = reviewService.filterReviews(bookId, userId, rating);
+        List<ReviewResponseDTO> dtos = reviews.stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     // Получить отзыв по ID
     @GetMapping("/{id}")
-    public ResponseEntity<Review> getReviewById(@PathVariable int id) {
+    public ResponseEntity<ReviewResponseDTO> getReviewById(@PathVariable Integer id) {
         Review review = reviewService.getReviewById(id);
         if (review != null) {
-            return new ResponseEntity<>(review, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(convertToResponseDTO(review), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Получить отзывы по книге
-    @GetMapping("/book/{bookId}")
-    public ResponseEntity<List<Review>> getReviewsByBook(@PathVariable int bookId) {
-        List<Review> reviews = reviewService.getReviewsByBook(bookId);
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
-    }
-
-    // Получить отзывы по читателю
-    @GetMapping("/reader/{readerId}")
-    public ResponseEntity<List<Review>> getReviewsByReader(@PathVariable int readerId) {
-        List<Review> reviews = reviewService.getReviewsByReader(readerId);
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
-    }
-
-    // Создать новый отзыв
+    // Создать отзыв
     @PostMapping
-    public ResponseEntity<Review> createReview(@RequestBody Review review) {
+    public ResponseEntity<ReviewResponseDTO> createReview(@RequestBody ReviewRequestDTO reviewDTO) {
+        Review review = convertToEntity(reviewDTO);
         Review createdReview = reviewService.saveReview(review);
-        return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToResponseDTO(createdReview), HttpStatus.CREATED);
     }
 
-    // Обновить существующий отзыв
+    // Обновить отзыв
     @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable int id, @RequestBody Review review) {
+    public ResponseEntity<ReviewResponseDTO> updateReview(
+            @PathVariable Integer id,
+            @RequestBody ReviewRequestDTO reviewDTO) {
+
         Review existingReview = reviewService.getReviewById(id);
         if (existingReview != null) {
-            review.setId(id); // Убедимся, что ID обновляемого отзыва совпадает с переданным
+            Review review = convertToEntity(reviewDTO);
+            review.setId(id);
             Review updatedReview = reviewService.saveReview(review);
-            return new ResponseEntity<>(updatedReview, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(convertToResponseDTO(updatedReview), HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // Удалить отзыв по ID
+    // Удалить отзыв
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable int id) {
-        Review review = reviewService.getReviewById(id);
-        if (review != null) {
-            reviewService.deleteReview(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Void> deleteReview(@PathVariable Integer id) {
+        reviewService.deleteReview(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // Методы преобразования
+    private Review convertToEntity(ReviewRequestDTO dto) {
+        Review review = new Review();
+        review.setBook(bookService.getBookById(dto.getBookId()));
+        review.setReader(userService.getUserById(dto.getUserId()));
+        review.setRating(dto.getRating());
+        review.setComment(dto.getComment());
+        return review;
+    }
+
+    private ReviewResponseDTO convertToResponseDTO(Review review) {
+        BookSimpleDTO bookDTO = new BookSimpleDTO(review.getBook().getId(), review.getBook().getTitle());
+        UserSimpleDTO userDTO = new UserSimpleDTO(review.getReader().getId(), review.getReader().getUsername());
+
+        return new ReviewResponseDTO(
+                review.getId(),
+                bookDTO,
+                userDTO,
+                review.getRating(),
+                review.getComment()
+        );
     }
 }
