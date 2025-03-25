@@ -19,8 +19,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "sonar": "sonar-scanner -Dsonar.projectBaseDir=.",
-    "sonar:ci": "sonar-scanner -Dsonar.projectBaseDir=. -Dsonar.login=$SONAR_TOKEN",
+    "sonar": "export SONAR_SCANNER_OPTS=\"-Djava.version=17\" && sonar-scanner -Dsonar.projectBaseDir=.",
+    "sonar:ci": "export SONAR_SCANNER_OPTS=\"-Djava.version=17\" && sonar-scanner -Dsonar.projectBaseDir=. -Dsonar.login=$SONAR_TOKEN",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --max-warnings 0",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "prepare": "husky install",
