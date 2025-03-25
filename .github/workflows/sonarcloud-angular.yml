@@ -1,15 +1,18 @@
-name: SonarCloud (Angular)
+name: SonarCloud Analysis
 on:
   push:
-    branches: [front_angular]
+    branches: [ front_angular ]
   pull_request:
-    branches: [front_angular]
+    branches: [ front_angular ]
 
 jobs:
   analyze:
+    name: Analyze
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -19,11 +22,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Пропускаем тесты, просто собираем проект
       - name: Build project
-        run: npm run build
+        run: npm run build -- --configuration=production
 
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
