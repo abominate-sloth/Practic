@@ -13,8 +13,12 @@ import java.util.List;
 @Service // Указывает, что это сервис
 public class IssueService {
 
-    @Autowired // Внедряет репозиторий
-    private IssueRepository issueRepository;
+    private final IssueRepository issueRepository;
+
+    @Autowired
+    public IssueService(IssueRepository issueRepository) {
+        this.issueRepository = issueRepository;
+    }
 
     // Получить все выдачи
     public List<Issue> getAllIssues() {

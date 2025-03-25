@@ -17,14 +17,16 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/reviews")
 public class ReviewController {
 
-    @Autowired
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
+    private final BookService bookService;
+    private final UserService userService;
 
     @Autowired
-    private BookService bookService;
-
-    @Autowired
-    private UserService userService;
+    public ReviewController(ReviewService reviewService, BookService bookService, UserService userService) {
+        this.reviewService = reviewService;
+        this.bookService = bookService;
+        this.userService = userService;
+    }
 
     // Фильтрация отзывов
     @GetMapping
@@ -92,23 +94,15 @@ public class ReviewController {
     }
 
     private ReviewResponseDTO convertToResponseDTO(Review review) {
-        ReviewResponseDTO dto = new ReviewResponseDTO();
-        dto.setId(review.getId());
-        dto.setRating(review.getRating());
-        dto.setComment(review.getComment());
+        BookSimpleDTO bookDTO = new BookSimpleDTO(review.getBook().getId(), review.getBook().getTitle());
+        UserSimpleDTO userDTO = new UserSimpleDTO(review.getReader().getId(), review.getReader().getUsername());
 
-        // BookSimpleDTO
-        BookSimpleDTO bookDTO = new BookSimpleDTO();
-        bookDTO.setId(review.getBook().getId());
-        bookDTO.setTitle(review.getBook().getTitle());
-        dto.setBook(bookDTO);
-
-        // UserSimpleDTO
-        UserSimpleDTO userDTO = new UserSimpleDTO();
-        userDTO.setId(review.getReader().getId());
-        userDTO.setUsername(review.getReader().getUsername());
-        dto.setUser(userDTO);
-
-        return dto;
+        return new ReviewResponseDTO(
+                review.getId(),
+                bookDTO,
+                userDTO,
+                review.getRating(),
+                review.getComment()
+        );
     }
 }

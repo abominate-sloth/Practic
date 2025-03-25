@@ -12,8 +12,12 @@ import java.util.List;
 @Service // Указывает, что это сервис
 public class GenreService {
 
-    @Autowired // Внедряет репозиторий
-    private GenreRepository genreRepository;
+    private final GenreRepository genreRepository;
+
+    @Autowired
+    public GenreService(GenreRepository genreRepository) {
+        this.genreRepository = genreRepository;
+    }
 
     // Получить все жанры
     public List<Genre> getAllGenres() {

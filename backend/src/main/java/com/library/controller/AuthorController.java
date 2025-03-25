@@ -17,8 +17,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/authors")
 public class AuthorController {
 
+    private final AuthorService authorService;
+
     @Autowired
-    private AuthorService authorService;
+    public AuthorController(AuthorService authorService) {
+        this.authorService = authorService;
+    }
 
     // Фильтрация авторов (возвращает DTO)
     @GetMapping
@@ -87,10 +91,10 @@ public class AuthorController {
     }
 
     private AuthorResponseDTO convertToResponseDTO(Author author) {
-        AuthorResponseDTO dto = new AuthorResponseDTO();
-        dto.setId(author.getId());
-        dto.setName(author.getName());
-        dto.setBirthDate(author.getBirthDate());
-        return dto;
+        return new AuthorResponseDTO(
+                author.getId(),
+                author.getName(),
+                author.getBirthDate()
+        );
     }
 }

@@ -13,8 +13,12 @@ import java.util.List;
 @Service // Указывает, что это сервис
 public class UserService {
 
-    @Autowired // Внедряет репозиторий
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     // Получить всех пользователей
     public List<User> getAllUsers() {

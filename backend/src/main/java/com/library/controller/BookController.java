@@ -20,17 +20,18 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/books")
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
+    private final GenreService genreService;
+    private final AuthorService authorService;
+    private final ReviewService reviewService;
 
     @Autowired
-    private GenreService genreService;
-
-    @Autowired
-    private AuthorService authorService;
-
-    @Autowired
-    private ReviewService reviewService;
+    public BookController(BookService bookService, GenreService genreService, AuthorService authorService, ReviewService reviewService) {
+        this.bookService = bookService;
+        this.genreService = genreService;
+        this.authorService = authorService;
+        this.reviewService = reviewService;
+    }
 
     // Фильтрация книг
     @GetMapping
@@ -108,36 +109,26 @@ public class BookController {
     }
 
     private BookResponseDTO convertToResponseDTO(Book book) {
-        BookResponseDTO dto = new BookResponseDTO();
-        dto.setId(book.getId());
-        dto.setTitle(book.getTitle());
-
+        GenreResponseDTO genreDTO = null;
         if (book.getGenre() != null) {
-            GenreResponseDTO genreDTO = new GenreResponseDTO();
-            genreDTO.setId(book.getGenre().getId());
-            genreDTO.setName(book.getGenre().getName());
-            dto.setGenre(genreDTO);
+            genreDTO = new GenreResponseDTO(book.getGenre().getId(), book.getGenre().getName());
         }
-
-        dto.setPublishYear(book.getPublishYear());
-        dto.setIsbn(book.getIsbn());
-        dto.setCopiesAvailable(book.getCopiesAvailable());
 
         // Преобразование авторов
         Set<AuthorResponseDTO> authorDTOs = book.getAuthors().stream()
-                .map(author -> {
-                    AuthorResponseDTO authorDTO = new AuthorResponseDTO();
-                    authorDTO.setId(author.getId());
-                    authorDTO.setName(author.getName());
-                    authorDTO.setBirthDate(author.getBirthDate());
-                    return authorDTO;
-                })
+                .map(author -> new AuthorResponseDTO(author.getId(), author.getName(), author.getBirthDate()))
                 .collect(Collectors.toSet());
-        dto.setAuthors(authorDTOs);
 
-        // Добавляем только средний рейтинг
-        dto.setAverageRating(reviewService.getAverageRatingForBook(book.getId()));
-
-        return dto;
+        // Создаем объект BookResponseDTO через конструктор
+        return new BookResponseDTO(
+                book.getId(),
+                book.getTitle(),
+                genreDTO,
+                book.getPublishYear(),
+                book.getIsbn(),
+                book.getCopiesAvailable(),
+                authorDTOs,
+                reviewService.getAverageRatingForBook(book.getId())
+        );
     }
 }

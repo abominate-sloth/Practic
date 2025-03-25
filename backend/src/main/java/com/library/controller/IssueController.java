@@ -18,14 +18,16 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/issues")
 public class IssueController {
 
-    @Autowired
-    private IssueService issueService;
+    private final IssueService issueService;
+    private final BookService bookService;
+    private final UserService userService;
 
     @Autowired
-    private BookService bookService;
-
-    @Autowired
-    private UserService userService;
+    public IssueController(IssueService issueService, BookService bookService, UserService userService) {
+        this.issueService = issueService;
+        this.bookService = bookService;
+        this.userService = userService;
+    }
 
     // Фильтрация выдач
     @GetMapping
@@ -96,29 +98,17 @@ public class IssueController {
     }
 
     private IssueResponseDTO convertToResponseDTO(Issue issue) {
-        IssueResponseDTO dto = new IssueResponseDTO();
-        dto.setId(issue.getId());
-        dto.setIssueDate(issue.getIssueDate());
-        dto.setReturnDate(issue.getReturnDate());
+        BookSimpleDTO bookDTO = new BookSimpleDTO(issue.getBook().getId(), issue.getBook().getTitle());
+        UserSimpleDTO readerDTO = new UserSimpleDTO(issue.getReader().getId(), issue.getReader().getUsername());
+        UserSimpleDTO employeeDTO = new UserSimpleDTO(issue.getEmployee().getId(), issue.getEmployee().getUsername());
 
-        // BookSimpleDTO
-        BookSimpleDTO bookDTO = new BookSimpleDTO();
-        bookDTO.setId(issue.getBook().getId());
-        bookDTO.setTitle(issue.getBook().getTitle());
-        dto.setBook(bookDTO);
-
-        // UserSimpleDTO (читатель)
-        UserSimpleDTO readerDTO = new UserSimpleDTO();
-        readerDTO.setId(issue.getReader().getId());
-        readerDTO.setUsername(issue.getReader().getUsername());
-        dto.setReader(readerDTO);
-
-        // UserSimpleDTO (сотрудник)
-        UserSimpleDTO employeeDTO = new UserSimpleDTO();
-        employeeDTO.setId(issue.getEmployee().getId());
-        employeeDTO.setUsername(issue.getEmployee().getUsername());
-        dto.setEmployee(employeeDTO);
-
-        return dto;
+        return new IssueResponseDTO(
+                issue.getId(),
+                bookDTO,
+                readerDTO,
+                employeeDTO,
+                issue.getIssueDate(),
+                issue.getReturnDate()
+        );
     }
 }

@@ -16,8 +16,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/genres")
 public class GenreController {
 
+    private final GenreService genreService;
+
     @Autowired
-    private GenreService genreService;
+    public GenreController(GenreService genreService) {
+        this.genreService = genreService;
+    }
 
     // Получить все жанры
     @GetMapping
@@ -80,9 +84,6 @@ public class GenreController {
     }
 
     private GenreResponseDTO convertToResponseDTO(Genre genre) {
-        GenreResponseDTO dto = new GenreResponseDTO();
-        dto.setId(genre.getId());
-        dto.setName(genre.getName());
-        return dto;
+        return new GenreResponseDTO(genre.getId(), genre.getName());
     }
 }

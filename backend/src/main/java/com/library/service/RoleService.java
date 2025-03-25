@@ -12,8 +12,12 @@ import java.util.List;
 @Service // Указывает, что это сервис
 public class RoleService {
 
-    @Autowired // Внедряет репозиторий
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
+
+    @Autowired
+    public RoleService(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
     // Получить всех ролей
     public List<Role> getAllRoles() {

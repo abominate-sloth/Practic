@@ -13,8 +13,12 @@ import java.util.List;
 @Service // Указывает, что это сервис
 public class ReviewService {
 
-    @Autowired // Внедряет репозиторий
-    private ReviewRepository reviewRepository;
+    private final ReviewRepository reviewRepository;
+
+    @Autowired
+    public ReviewService(ReviewRepository reviewRepository) {
+        this.reviewRepository = reviewRepository;
+    }
 
     // Получить всех отзывов
     public List<Review> getAllReviews() {

@@ -16,8 +16,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/roles")
 public class RoleController {
 
+    private final RoleService roleService;
+
     @Autowired
-    private RoleService roleService;
+    public RoleController(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
     // Фильтрация ролей (возвращает DTO)
     @GetMapping
@@ -82,9 +86,6 @@ public class RoleController {
     }
 
     private RoleResponseDTO convertToResponseDTO(Role role) {
-        RoleResponseDTO dto = new RoleResponseDTO();
-        dto.setId(role.getId());
-        dto.setRoleName(role.getRoleName());
-        return dto;
+        return new RoleResponseDTO(role.getId(), role.getRoleName());
     }
 }

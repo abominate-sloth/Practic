@@ -19,11 +19,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final RoleService roleService; // Сервис для работы с ролями
 
     @Autowired
-    private RoleService roleService; // Добавляем сервис для работы с ролями
+    public UserController(UserService userService, RoleService roleService) {
+        this.userService = userService;
+        this.roleService = roleService;
+    }
 
     // Фильтрация пользователей
     @GetMapping
@@ -98,18 +101,14 @@ public class UserController {
     }
 
     private UserResponseDTO convertToResponseDTO(User user) {
-        UserResponseDTO dto = new UserResponseDTO();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());
-        dto.setJoinDate(user.getJoinDate());
+        RoleResponseDTO roleDTO = new RoleResponseDTO(user.getRole().getId(), user.getRole().getRoleName());
 
-        // Преобразуем Role в RoleResponseDTO
-        RoleResponseDTO roleDTO = new RoleResponseDTO();
-        roleDTO.setId(user.getRole().getId());
-        roleDTO.setRoleName(user.getRole().getRoleName());
-        dto.setRole(roleDTO);
-
-        return dto;
+        return new UserResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getJoinDate(),
+                roleDTO
+        );
     }
 }

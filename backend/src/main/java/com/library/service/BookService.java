@@ -12,8 +12,12 @@ import java.util.List;
 @Service // Указывает, что это сервис
 public class BookService {
 
-    @Autowired // Внедряет репозиторий
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
+
+    @Autowired
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
     // Получить все книги
     public List<Book> getAllBooks() {

@@ -13,8 +13,12 @@ import java.util.List;
 @Service // Указывает, что это сервис
 public class AuthorService {
 
-    @Autowired // Внедряет репозиторий
-    private AuthorRepository authorRepository;
+    private final AuthorRepository authorRepository;
+
+    @Autowired
+    public AuthorService(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
+    }
 
     // Получить всех авторов
     public List<Author> getAllAuthors() {
