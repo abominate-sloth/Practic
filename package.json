@@ -19,13 +19,16 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "sonar": "sonar-scanner -Dsonar.projectKey=abominate-sloth_Practic_React",
-    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix"
+    "sonar": "sonar-scanner -Dsonar.organization=adeptsofsloth -Dsonar.projectKey=abominate-sloth_Practic_React -Dsonar.host.url=https://sonarcloud.io",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --max-warnings 0",
+    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "sonarqube-scanner": "^2.8.1",
-    "eslint-plugin-sonarjs": "^0.23.0"
+    "eslint-plugin-sonarjs": "^0.23.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3"
   },
   "eslintConfig": {
     "extends": [
@@ -33,7 +36,9 @@
       "plugin:sonarjs/recommended"
     ],
     "rules": {
-      "sonarjs/cognitive-complexity": ["error", 15]
+      "sonarjs/cognitive-complexity": ["error", 15],
+      "sonarjs/no-duplicate-string": "error",
+      "sonarjs/no-all-duplicated-branches": "error"
     }
   },
   "browserslist": {
@@ -46,6 +51,12 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "git add"
     ]
   }
 }
