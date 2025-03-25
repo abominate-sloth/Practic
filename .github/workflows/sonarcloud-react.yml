@@ -36,16 +36,13 @@ jobs:
           echo "SonarScanner version:"
           sonar-scanner -v
 
-      - name: Run Analysis
+      - name: Run SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          # Принудительно используем системную Java 17
-          export SONAR_SCANNER_OPTS="--add-opens=java.base/java.lang=ALL-UNNAMED"
           sonar-scanner \
-            -Dsonar.java.version=17 \
+            -Dsonar.branch.name=front_react \
             -Dsonar.projectBaseDir=. \
             -Dsonar.organization=adeptsofsloth \
             -Dsonar.projectKey=abominate-sloth_Practic_React \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -X
+            -Dsonar.host.url=https://sonarcloud.io
