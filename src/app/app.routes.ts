@@ -16,26 +16,117 @@ import { IssueListComponent } from './components/issue-list/issue-list.component
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
 
 export const routes: Routes = [
-  { path: '', component: TableListComponent }, // Главная страница со списком таблиц
-  { path: 'books', component: BookListComponent }, // Список книг
-  { path: 'books/new', component: BookFormComponent }, // Форма создания новой книги
-  { path: 'books/:id/edit', component: BookFormComponent }, // Форма редактирования книги
-  { path: 'genres', component: GenreListComponent }, // Список жанров
-  { path: 'genres/new', component: GenreFormComponent }, // Форма создания нового жанра
-  { path: 'genres/:id/edit', component: GenreFormComponent }, // Форма редактирования жанра
-  { path: 'authors', component: AuthorListComponent },
-  { path: 'authors/new', component: AuthorFormComponent },
-  { path: 'authors/:id/edit', component: AuthorFormComponent },
-  { path: 'roles', component: RoleListComponent },
-  { path: 'roles/new', component: RoleFormComponent },
-  { path: 'roles/:id/edit', component: RoleFormComponent },
-  { path: 'users', component: UserListComponent },
-  { path: 'users/new', component: UserFormComponent },
-  { path: 'users/:id/edit', component: UserFormComponent },
-  { path: 'reviews', component: ReviewListComponent },
-  { path: 'reviews/new', component: ReviewFormComponent },
-  { path: 'reviews/:id/edit', component: ReviewFormComponent },
-  { path: 'issues', component: IssueListComponent },
-  { path: 'issues/new', component: IssueFormComponent },
-  { path: 'issues/:id/edit', component: IssueFormComponent }
+  // Статические маршруты (SSR)
+  {
+    path: '',
+    component: TableListComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'books',
+    component: BookListComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'books/new',
+    component: BookFormComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'genres',
+    component: GenreListComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'genres/new',
+    component: GenreFormComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'authors',
+    component: AuthorListComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'authors/new',
+    component: AuthorFormComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'roles',
+    component: RoleListComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'roles/new',
+    component: RoleFormComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'users',
+    component: UserListComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'users/new',
+    component: UserFormComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'reviews',
+    component: ReviewListComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'reviews/new',
+    component: ReviewFormComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'issues',
+    component: IssueListComponent,
+    data: { ssr: true }
+  },
+  {
+    path: 'issues/new',
+    component: IssueFormComponent,
+    data: { ssr: true }
+  },
+
+  // Динамические маршруты (CSR)
+  {
+    path: 'books/:id/edit',
+    component: BookFormComponent,
+    data: { ssr: false }
+  },
+  {
+    path: 'genres/:id/edit',
+    component: GenreFormComponent,
+    data: { ssr: false }
+  },
+  {
+    path: 'authors/:id/edit',
+    component: AuthorFormComponent,
+    data: { ssr: false }
+  },
+  {
+    path: 'roles/:id/edit',
+    component: RoleFormComponent,
+    data: { ssr: false }
+  },
+  {
+    path: 'users/:id/edit',
+    component: UserFormComponent,
+    data: { ssr: false }
+  },
+  {
+    path: 'reviews/:id/edit',
+    component: ReviewFormComponent,
+    data: { ssr: false }
+  },
+  {
+    path: 'issues/:id/edit',
+    component: IssueFormComponent,
+    data: { ssr: false }
+  }
 ];

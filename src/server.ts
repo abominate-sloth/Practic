@@ -14,31 +14,47 @@ const browserDistFolder = resolve(serverDistFolder, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/**', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+// Список маршрутов, которые должны рендериться на клиенте
+const CLIENT_SIDE_ROUTES = [
+  '/books/:id/edit',
+  '/genres/:id/edit',
+  '/authors/:id/edit',
+  '/roles/:id/edit',
+  '/users/:id/edit',
+  '/reviews/:id/edit',
+  '/issues/:id/edit'
+];
 
 /**
  * Serve static files from /browser
  */
-app.use(
-  express.static(browserDistFolder, {
-    maxAge: '1y',
-    index: false,
-    redirect: false,
-  }),
-);
+app.use(express.static(browserDistFolder, {
+  maxAge: '1y',
+  index: false,
+  redirect: false,
+}));
 
 /**
- * Handle all other requests by rendering the Angular application.
+ * Middleware для проверки маршрутов
+ */
+app.use((req, res, next) => {
+  // Проверяем, является ли маршрут клиентским
+  const isClientRoute = CLIENT_SIDE_ROUTES.some(route => {
+    const pattern = route.replace(/:\w+/g, '([^/]+)');
+    return new RegExp(`^${pattern}$`).test(req.path);
+  });
+
+  if (isClientRoute) {
+    // Для клиентских маршрутов просто отдаём index.html
+    return res.sendFile(resolve(browserDistFolder, 'index.html'));
+  }
+
+  // Для остальных - SSR
+  next();
+});
+
+/**
+ * Handle all other requests by rendering the Angular application
  */
 app.use('/**', (req, res, next) => {
   angularApp
@@ -50,17 +66,14 @@ app.use('/**', (req, res, next) => {
 });
 
 /**
- * Start the server if this module is the main entry point.
- * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
+ * Start the server
  */
 if (isMainModule(import.meta.url)) {
   const port = process.env['PORT'] || 4000;
   app.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
+    console.log(`Client-side routes: ${CLIENT_SIDE_ROUTES.join(', ')}`);
   });
 }
 
-/**
- * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
- */
 export const reqHandler = createNodeRequestHandler(app);
