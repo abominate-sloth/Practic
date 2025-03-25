@@ -19,8 +19,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "sonar": "SONAR_SCANNER_OPTS=\"-Djava.version=17\" sonar-scanner -Dsonar.organization=adeptsofsloth -Dsonar.projectKey=abominate-sloth_Practic_React -Dsonar.host.url=https://sonarcloud.io -Dsonar.sourceEncoding=UTF-8",
-    "sonar:ci": "npm run sonar -Dsonar.login=$SONAR_TOKEN",
+    "sonar": "sonar-scanner -Dsonar.projectBaseDir=.",
+    "sonar:ci": "sonar-scanner -Dsonar.projectBaseDir=. -Dsonar.login=$SONAR_TOKEN",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --max-warnings 0",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "prepare": "husky install",
@@ -32,8 +32,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "jest-sonar-reporter": "^2.0.0"
+    "@types/react-dom": "^19.0.0"
   },
   "eslintConfig": {
     "extends": [
@@ -64,8 +63,5 @@
       "eslint --fix --max-warnings 0",
       "git add"
     ]
-  },
-  "jest": {
-    "testResultsProcessor": "jest-sonar-reporter"
   }
 }
