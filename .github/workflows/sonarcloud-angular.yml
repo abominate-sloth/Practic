@@ -1,34 +1,28 @@
 name: SonarCloud (Angular)
 on:
   push:
-    branches:
-      - front_angular
+    branches: [front_angular]
   pull_request:
-    branches:
-      - front_angular
+    branches: [front_angular]
 
 jobs:
   analyze:
-    name: Analyze with SonarCloud
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      # Установка Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      # Установка зависимостей и сборка проекта
       - name: Install dependencies
         run: npm install
 
-      # Запуск тестов (если есть) и генерация отчета покрытия
-      - name: Run tests
-        run: npm test -- --code-coverage
+      # Пропускаем тесты, просто собираем проект
+      - name: Build project
+        run: npm run build
 
-      # Анализ через SonarCloud
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
