@@ -19,8 +19,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "sonar": "echo 'Please use GitHub Actions workflow instead'",
-    "sonar:ci": "echo 'Please use GitHub Actions workflow instead'",
+    "sonar": "sonar-scanner -Dsonar.projectKey=adeptsofsloth_Practic -Dsonar.organization=adeptsofsloth -Dsonar.host.url=https://sonarcloud.io",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --max-warnings 0",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "prepare": "husky install",
@@ -32,18 +31,34 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.3",
     "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0"
+    "@types/react-dom": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "plugin:sonarjs/recommended"
+      "plugin:sonarjs/recommended",
+      "plugin:react/recommended",
+      "plugin:react-hooks/recommended"
     ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaFeatures": {
+        "jsx": true
+      },
+      "ecmaVersion": 2021,
+      "sourceType": "module"
+    },
     "rules": {
       "sonarjs/cognitive-complexity": ["error", 15],
       "sonarjs/no-duplicate-string": "error",
       "sonarjs/no-all-duplicated-branches": "error",
-      "sonarjs/no-identical-functions": "error"
+      "sonarjs/no-identical-functions": "error",
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off"
     }
   },
   "browserslist": {
