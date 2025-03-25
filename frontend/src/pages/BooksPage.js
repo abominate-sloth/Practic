@@ -10,12 +10,11 @@ import {
 import { Add, Edit, Delete, Search } from '@mui/icons-material';
 import {
   getBooks, createBook, updateBook, deleteBook,
-  getGenres, getAuthors
+  getGenres, getAuthors, filterBooks
 } from '../services/api';
 
 const BooksPage = () => {
   const [books, setBooks] = useState([]);
-  const [filteredBooks, setFilteredBooks] = useState([]);
   const [genres, setGenres] = useState([]);
   const [authors, setAuthors] = useState([]);
   const [currentBook, setCurrentBook] = useState({
@@ -28,18 +27,36 @@ const BooksPage = () => {
   });
   const [openDialog, setOpenDialog] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedAuthor, setSelectedAuthor] = useState(null);
+  const [filters, setFilters] = useState({
+    title: '',
+    genreId: null,
+    publishYear: null,
+    isbn: '',
+    copiesAvailable: null
+  });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchBooks();
-    fetchGenres();
-    fetchAuthors();
+    fetchInitialData();
   }, []);
 
   useEffect(() => {
-    filterBooks();
-  }, [books, searchTerm, selectedAuthor]);
+    const timer = setTimeout(() => {
+      fetchBooksWithFilters();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [filters]);
+
+  const fetchInitialData = async () => {
+    try {
+      setLoading(true);
+      await Promise.all([fetchBooks(), fetchGenres(), fetchAuthors()]);
+    } catch (error) {
+      console.error('Error fetching initial data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchBooks = async () => {
     try {
@@ -47,6 +64,25 @@ const BooksPage = () => {
       setBooks(response.data);
     } catch (error) {
       console.error('Error fetching books:', error);
+    }
+  };
+
+  const fetchBooksWithFilters = async () => {
+    try {
+      setLoading(true);
+      // Преобразуем фильтры, удаляя пустые значения
+      const activeFilters = Object.fromEntries(
+        Object.entries(filters).filter(([_, value]) =>
+          value !== '' && value !== null && value !== undefined
+        )
+      );
+
+      const response = await filterBooks(activeFilters);
+      setBooks(response.data);
+    } catch (error) {
+      console.error('Error filtering books:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,29 +104,8 @@ const BooksPage = () => {
     }
   };
 
-  const filterBooks = () => {
-    let result = [...books];
-
-    // Фильтрация по названию
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      result = result.filter(book =>
-        book.title.toLowerCase().includes(term)
-      );
-    }
-
-    // Фильтрация по автору
-    if (selectedAuthor) {
-      result = result.filter(book =>
-        book.authors?.some(author => author.id === selectedAuthor.id)
-      );
-    }
-
-    setFilteredBooks(result);
-  };
-
   const handleAddBook = async () => {
-    if (!currentBook.title.trim() || !currentBook.genreId || currentBook.authorIds.length === 0 || currentBook.copiesAvailable < 0) return;
+    if (!currentBook.title.trim() || !currentBook.genreId || currentBook.authorIds.length === 0) return;
 
     try {
       const bookData = {
@@ -103,14 +118,14 @@ const BooksPage = () => {
       };
       await createBook(bookData);
       resetForm();
-      fetchBooks();
+      fetchBooksWithFilters();
     } catch (error) {
       console.error('Error adding book:', error);
     }
   };
 
   const handleUpdateBook = async () => {
-    if (!currentBook.title.trim() || !currentBook.genreId || currentBook.authorIds.length === 0 || currentBook.copiesAvailable < 0) return;
+    if (!currentBook.title.trim() || !currentBook.genreId || currentBook.authorIds.length === 0) return;
 
     try {
       const bookData = {
@@ -123,7 +138,7 @@ const BooksPage = () => {
       };
       await updateBook(currentBook.id, bookData);
       resetForm();
-      fetchBooks();
+      fetchBooksWithFilters();
     } catch (error) {
       console.error('Error updating book:', error);
     }
@@ -132,7 +147,7 @@ const BooksPage = () => {
   const handleDeleteBook = async (id) => {
     try {
       await deleteBook(id);
-      fetchBooks();
+      fetchBooksWithFilters();
     } catch (error) {
       console.error('Error deleting book:', error);
     }
@@ -151,21 +166,26 @@ const BooksPage = () => {
     setIsEditing(false);
   };
 
+  const resetFilters = () => {
+    setFilters({
+      title: '',
+      genreId: null,
+      publishYear: null,
+      isbn: '',
+      copiesAvailable: null
+    });
+  };
+
+  const handleFilterChange = (name, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [name]: value === '' ? null : value
+    }));
+  };
+
   const getGenreNameById = (genreId) => {
     const genre = genres.find(g => g.id === genreId);
     return genre ? genre.name : '-';
-  };
-
-  const getAuthorNamesByIds = (authorIds) => {
-    return authorIds.map(id => {
-      const author = authors.find(a => a.id === id);
-      return author ? author.name : '';
-    }).filter(name => name !== '');
-  };
-
-  const resetFilters = () => {
-    setSearchTerm('');
-    setSelectedAuthor(null);
   };
 
   return (
@@ -192,100 +212,143 @@ const BooksPage = () => {
         </Button>
       </Box>
 
-      {/* Панель поиска и фильтрации */}
-      <Box display="flex" gap={2} mb={3}>
+      {/* Фильтры поиска */}
+      <Box mb={3} display="flex" gap={2} alignItems="center" flexWrap="wrap">
         <TextField
-          fullWidth
           variant="outlined"
+          size="small"
           placeholder="Search by title..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={filters.title}
+          onChange={(e) => handleFilterChange('title', e.target.value)}
           InputProps={{
-            startAdornment: <Search sx={{ color: 'action.active', mr: 1 }} />
+            startAdornment: <Search color="action" sx={{ mr: 1 }} />
           }}
-        />
-        <Autocomplete
           sx={{ width: 300 }}
-          options={authors}
-          getOptionLabel={(option) => option.name}
-          value={selectedAuthor}
-          onChange={(e, newValue) => setSelectedAuthor(newValue)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Filter by author"
-              variant="outlined"
-            />
-          )}
         />
+
+        <FormControl size="small" sx={{ width: 300 }}>
+          <InputLabel>Filter by genre</InputLabel>
+          <Select
+            value={filters.genreId || ''}
+            label="Filter by genre"
+            onChange={(e) => handleFilterChange('genreId', e.target.value)}
+          >
+            <MenuItem value="">All genres</MenuItem>
+            {genres.map((genre) => (
+              <MenuItem key={genre.id} value={genre.id}>
+                {genre.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <TextField
+          variant="outlined"
+          size="small"
+          label="Publish Year"
+          type="number"
+          value={filters.publishYear || ''}
+          onChange={(e) => handleFilterChange('publishYear', e.target.value)}
+          sx={{ width: 150 }}
+        />
+
+        <TextField
+          variant="outlined"
+          size="small"
+          label="ISBN"
+          value={filters.isbn || ''}
+          onChange={(e) => handleFilterChange('isbn', e.target.value)}
+          sx={{ width: 200 }}
+        />
+
+        <TextField
+          variant="outlined"
+          size="small"
+          label="Min Copies"
+          type="number"
+          value={filters.copiesAvailable || ''}
+          onChange={(e) => handleFilterChange('copiesAvailable', e.target.value)}
+          sx={{ width: 150 }}
+          inputProps={{ min: 0 }}
+        />
+
         <Button
           variant="outlined"
           onClick={resetFilters}
+          disabled={Object.values(filters).every(
+            val => val === '' || val === null || val === undefined
+          )}
         >
-          Reset Filters
+          Reset filters
         </Button>
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Genre</TableCell>
-              <TableCell>Year</TableCell>
-              <TableCell>ISBN</TableCell>
-              <TableCell>Copies</TableCell>
-              <TableCell>Authors</TableCell>
-              <TableCell>Rating</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredBooks.map((book) => (
-              <TableRow key={book.id}>
-                <TableCell>{book.id}</TableCell>
-                <TableCell>{book.title}</TableCell>
-                <TableCell>{book.genre?.name || '-'}</TableCell>
-                <TableCell>{book.publishYear || '-'}</TableCell>
-                <TableCell>{book.isbn || '-'}</TableCell>
-                <TableCell>{book.copiesAvailable}</TableCell>
-                <TableCell>
-                  {book.authors?.map(author => (
-                    <Chip
-                      key={author.id}
-                      label={author.name}
-                      size="small"
-                      sx={{ mr: 0.5, mb: 0.5 }}
-                    />
-                  ))}
-                </TableCell>
-                <TableCell>{book.averageRating || '-'}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => {
-                    setCurrentBook({
-                      id: book.id,
-                      title: book.title,
-                      genreId: book.genre?.id || '',
-                      publishYear: book.publishYear || '',
-                      isbn: book.isbn || '',
-                      copiesAvailable: book.copiesAvailable,
-                      authorIds: book.authors?.map(a => a.id) || []
-                    });
-                    setIsEditing(true);
-                    setOpenDialog(true);
-                  }}>
-                    <Edit color="primary" />
-                  </IconButton>
-                  <IconButton onClick={() => handleDeleteBook(book.id)}>
-                    <Delete color="error" />
-                  </IconButton>
-                </TableCell>
+      {loading ? (
+        <Box display="flex" justifyContent="center" p={3}>
+          <Typography>Loading...</Typography>
+        </Box>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Genre</TableCell>
+                <TableCell>Year</TableCell>
+                <TableCell>ISBN</TableCell>
+                <TableCell>Copies</TableCell>
+                <TableCell>Authors</TableCell>
+                <TableCell>Rating</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {books.map((book) => (
+                <TableRow key={book.id}>
+                  <TableCell>{book.id}</TableCell>
+                  <TableCell>{book.title}</TableCell>
+                  <TableCell>{book.genre?.name || '-'}</TableCell>
+                  <TableCell>{book.publishYear || '-'}</TableCell>
+                  <TableCell>{book.isbn || '-'}</TableCell>
+                  <TableCell>{book.copiesAvailable}</TableCell>
+                  <TableCell>
+                    {book.authors?.map(author => (
+                      <Chip
+                        key={author.id}
+                        label={author.name}
+                        size="small"
+                        sx={{ mr: 0.5, mb: 0.5 }}
+                      />
+                    ))}
+                  </TableCell>
+                  <TableCell>{book.averageRating || '-'}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => {
+                      setCurrentBook({
+                        id: book.id,
+                        title: book.title,
+                        genreId: book.genre?.id || '',
+                        publishYear: book.publishYear || '',
+                        isbn: book.isbn || '',
+                        copiesAvailable: book.copiesAvailable,
+                        authorIds: book.authors?.map(a => a.id) || []
+                      });
+                      setIsEditing(true);
+                      setOpenDialog(true);
+                    }}>
+                      <Edit color="primary" />
+                    </IconButton>
+                    <IconButton onClick={() => handleDeleteBook(book.id)}>
+                      <Delete color="error" />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       {/* Add/Edit Dialog */}
       <Dialog open={openDialog} onClose={resetForm} fullWidth maxWidth="sm">
@@ -301,7 +364,7 @@ const BooksPage = () => {
               title: e.target.value
             })}
           />
-          <FormControl fullWidth sx={{ mb: 2 }}>
+          <FormControl fullWidth>
             <InputLabel>Genre *</InputLabel>
             <Select
               value={currentBook.genreId}
@@ -370,13 +433,10 @@ const BooksPage = () => {
             label="Copies Available"
             type="number"
             value={currentBook.copiesAvailable}
-            onChange={(e) => {
-              const value = Math.max(0, e.target.value); // Валидация: не допускаем отрицательные значения
-              setCurrentBook({
-                ...currentBook,
-                copiesAvailable: value
-              });
-            }}
+            onChange={(e) => setCurrentBook({
+              ...currentBook,
+              copiesAvailable: e.target.value
+            })}
             inputProps={{ min: 0 }}
           />
         </DialogContent>
@@ -389,8 +449,7 @@ const BooksPage = () => {
             disabled={
               !currentBook.title ||
               !currentBook.genreId ||
-              currentBook.authorIds.length === 0 ||
-              currentBook.copiesAvailable < 0 // Валидация: не допускаем отрицательные значения
+              currentBook.authorIds.length === 0
             }
           >
             {isEditing ? 'Update' : 'Save'}

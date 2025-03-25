@@ -53,4 +53,22 @@ export const createIssue = (issueData) => api.post('/issues', issueData);
 export const updateIssue = (id, issueData) => api.put(`/issues/${id}`, issueData);
 export const deleteIssue = (id) => api.delete(`/issues/${id}`);
 
+export const filterBooks = async (filters) => {
+  try {
+    const params = new URLSearchParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== '') {
+        params.append(key, value);
+      }
+    });
+
+    const response = await api.get(`/books?${params.toString()}`);
+    return response;
+  } catch (error) {
+    console.error('Error in filterBooks API call:', error);
+    throw error;
+  }
+};
+
 export default api;
