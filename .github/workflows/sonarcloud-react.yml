@@ -16,7 +16,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'none'  # Отключаем кэш Maven
+          # Убрана настройка cache, так как Maven не используется
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -27,9 +27,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Verify Java version
+        run: |
+          echo "Using Java from: $JAVA_HOME"
+          java -version
+
       - name: Run SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          echo "Using Java: $(java -version)"
-          npm run sonar
+        run: npm run sonar
