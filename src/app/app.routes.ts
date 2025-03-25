@@ -16,117 +16,117 @@ import { IssueListComponent } from './components/issue-list/issue-list.component
 import { IssueFormComponent } from './components/issue-form/issue-form.component';
 
 export const routes: Routes = [
-  // Статические маршруты (SSR)
+  // Статические маршруты (SSR + prerender)
   {
     path: '',
     component: TableListComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'books',
     component: BookListComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'books/new',
     component: BookFormComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'genres',
     component: GenreListComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'genres/new',
     component: GenreFormComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'authors',
     component: AuthorListComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'authors/new',
     component: AuthorFormComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'roles',
     component: RoleListComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'roles/new',
     component: RoleFormComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'users',
     component: UserListComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'users/new',
     component: UserFormComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'reviews',
     component: ReviewListComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'reviews/new',
     component: ReviewFormComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'issues',
     component: IssueListComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
   {
     path: 'issues/new',
     component: IssueFormComponent,
-    data: { ssr: true }
+    data: { renderMode: 'server' }
   },
 
   // Динамические маршруты (CSR)
   {
     path: 'books/:id/edit',
     component: BookFormComponent,
-    data: { ssr: false }
+    data: { renderMode: 'client-only' }
   },
   {
     path: 'genres/:id/edit',
     component: GenreFormComponent,
-    data: { ssr: false }
+    data: { renderMode: 'client-only' }
   },
   {
     path: 'authors/:id/edit',
     component: AuthorFormComponent,
-    data: { ssr: false }
+    data: { renderMode: 'client-only' }
   },
   {
     path: 'roles/:id/edit',
     component: RoleFormComponent,
-    data: { ssr: false }
+    data: { renderMode: 'client-only' }
   },
   {
     path: 'users/:id/edit',
     component: UserFormComponent,
-    data: { ssr: false }
+    data: { renderMode: 'client-only' }
   },
   {
     path: 'reviews/:id/edit',
     component: ReviewFormComponent,
-    data: { ssr: false }
+    data: { renderMode: 'client-only' }
   },
   {
     path: 'issues/:id/edit',
     component: IssueFormComponent,
-    data: { ssr: false }
+    data: { renderMode: 'client-only' }
   }
 ];
