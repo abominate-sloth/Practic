@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ab0e2a72-ee52-4f52-9dc0-1108ac7a3335" name="Changes" comment="потерянное">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_25_03_2025_15_17__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_25_03_2025_15_17__Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/library/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/library/controller/UserController.java" afterDir="false" />
+    <list default="true" id="ab0e2a72-ee52-4f52-9dc0-1108ac7a3335" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/library/controller/BookController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/library/controller/BookController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,13 +136,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1740563898756</updated>
-    </task>
-    <task id="LOCAL-00001" summary="init">
-      <created>1740564058750</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1740564058750</updated>
     </task>
     <task id="LOCAL-00002" summary="Added entities for working with the database">
       <created>1740655751510</created>
@@ -483,7 +473,14 @@
       <option name="project" value="LOCAL" />
       <updated>1742971230649</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="потерянное">
+      <created>1742972180057</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1742972180057</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -510,8 +507,8 @@
     <MESSAGE value="правки" />
     <MESSAGE value="update + sonar" />
     <MESSAGE value="sonar" />
-    <MESSAGE value="потерянное" />
     <MESSAGE value="сонар" />
-    <option name="LAST_COMMIT_MESSAGE" value="сонар" />
+    <MESSAGE value="потерянное" />
+    <option name="LAST_COMMIT_MESSAGE" value="потерянное" />
   </component>
 </project>
