@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 export class UserListComponent implements OnInit {
   users: User[] = [];
 
-  constructor(private userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   ngOnInit(): void {
     this.loadUsers();

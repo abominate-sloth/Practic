@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 export class GenreListComponent implements OnInit {
   genres: Genre[] = [];
 
-  constructor(private genreService: GenreService) {}
+  constructor(private readonly genreService: GenreService) {}
 
   ngOnInit(): void {
     this.loadGenres();

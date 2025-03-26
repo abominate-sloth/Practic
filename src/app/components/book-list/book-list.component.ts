@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 export class BookListComponent implements OnInit {
   books: Book[] = [];
 
-  constructor(private bookService: BookService) {}
+  constructor(private readonly bookService: BookService) {}
 
   ngOnInit(): void {
     this.loadBooks();

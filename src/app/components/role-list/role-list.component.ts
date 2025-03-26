@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 export class RoleListComponent implements OnInit {
   roles: Role[] = [];
 
-  constructor(private roleService: RoleService) {}
+  constructor(private readonly roleService: RoleService) {}
 
   ngOnInit(): void {
     this.loadRoles();

@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 export class IssueListComponent implements OnInit {
   issues: Issue[] = [];
 
-  constructor(private issueService: IssueService) {}
+  constructor(private readonly issueService: IssueService) {}
 
   ngOnInit(): void {
     this.loadIssues();

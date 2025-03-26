@@ -23,9 +23,9 @@ export class UserFormComponent implements OnInit {
   roles: Role[] = [];
 
   constructor(
-    private userService: UserService,
-    private route: ActivatedRoute,
-    private router: Router
+    private readonly userService: UserService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {

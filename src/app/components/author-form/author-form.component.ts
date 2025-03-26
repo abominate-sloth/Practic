@@ -20,9 +20,9 @@ export class AuthorFormComponent implements OnInit {
   };
 
   constructor(
-    private authorService: AuthorService,
-    private route: ActivatedRoute,
-    private router: Router
+    private readonly authorService: AuthorService, // Добавлено readonly
+    private readonly route: ActivatedRoute,       // Добавлено readonly
+    private readonly router: Router                 // Добавлено readonly
   ) {}
 
   ngOnInit(): void {

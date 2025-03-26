@@ -31,10 +31,10 @@ export class BookFormComponent implements OnInit {
   selectedAuthorIds: number[] = [];
 
   constructor(
-    private bookService: BookService,
-    private authorService: AuthorService,
-    private route: ActivatedRoute,
-    private router: Router
+    private readonly bookService: BookService,
+    private readonly authorService: AuthorService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {

@@ -19,9 +19,9 @@ export class GenreFormComponent implements OnInit {
   };
 
   constructor(
-    private genreService: GenreService,
-    private route: ActivatedRoute,
-    private router: Router
+    private readonly genreService: GenreService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {

@@ -28,9 +28,9 @@ export class ReviewFormComponent implements OnInit {
   errorMessage = '';
 
   constructor(
-    private reviewService: ReviewService,
-    private route: ActivatedRoute,
-    private router: Router
+    private readonly reviewService: ReviewService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {

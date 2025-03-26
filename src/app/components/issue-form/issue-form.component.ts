@@ -29,9 +29,9 @@ export class IssueFormComponent implements OnInit {
   employeeUsers: User[] = []; // Только сотрудники
 
   constructor(
-    private issueService: IssueService,
-    private route: ActivatedRoute,
-    private router: Router
+    private readonly issueService: IssueService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {

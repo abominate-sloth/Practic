@@ -19,9 +19,9 @@ export class RoleFormComponent implements OnInit {
   };
 
   constructor(
-    private roleService: RoleService,
-    private route: ActivatedRoute,
-    private router: Router
+    private readonly roleService: RoleService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {

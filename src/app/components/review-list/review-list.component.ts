@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 export class ReviewListComponent implements OnInit {
   reviews: Review[] = [];
 
-  constructor(private reviewService: ReviewService) {}
+  constructor(private readonly reviewService: ReviewService) {}
 
   ngOnInit(): void {
     this.loadReviews();

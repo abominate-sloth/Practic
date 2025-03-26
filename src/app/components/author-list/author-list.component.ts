@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 export class AuthorListComponent implements OnInit {
   authors: Author[] = [];
 
-  constructor(private authorService: AuthorService) {}
+  constructor(private readonly authorService: AuthorService) {} // Добавлено readonly
 
   ngOnInit(): void {
     this.loadAuthors();
