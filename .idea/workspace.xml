@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ab0e2a72-ee52-4f52-9dc0-1108ac7a3335" name="Changes" comment="" />
+    <list default="true" id="ab0e2a72-ee52-4f52-9dc0-1108ac7a3335" name="Changes" comment="потерянное">
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_25_03_2025_15_17__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_25_03_2025_15_17__Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/library/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/library/controller/UserController.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,14 +25,14 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Backend_на_SpringBoot_+_Hibernate" />
+        <entry key="$PROJECT_DIR$" value="Backend" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="ProjectId" id="2tZeCfwquq0BYZFUL1M4rykRZ1O" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -41,7 +46,7 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Practic-Angular_Frontend/Practic-Angular_Frontend" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -471,11 +476,17 @@
       <option name="project" value="LOCAL" />
       <updated>1742924821973</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="сонар">
+      <created>1742971230649</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1742971230649</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="JDBC's update for new version of db." />
     <MESSAGE value="Readme update" />
     <MESSAGE value="Добавлено каскадное удаление и обновление в бд (book и bookauthors)&#10;Исправлена проблема при попытке обработать ввод значений отличных от пустой строки для полей, которые могли быть null.&#10;Добавлены отступы между методами сущностей" />
     <MESSAGE value="Изменения в бд: Удалено поле author_id в таблице книги(для этого есть таблица, для связи многие ко многим между авторами и книгами)&#10;Добавлен вывод полной информации о книге в разделе выдача книг" />
@@ -500,6 +511,7 @@
     <MESSAGE value="update + sonar" />
     <MESSAGE value="sonar" />
     <MESSAGE value="потерянное" />
-    <option name="LAST_COMMIT_MESSAGE" value="потерянное" />
+    <MESSAGE value="сонар" />
+    <option name="LAST_COMMIT_MESSAGE" value="сонар" />
   </component>
 </project>
