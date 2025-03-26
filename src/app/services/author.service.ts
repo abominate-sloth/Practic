@@ -9,7 +9,7 @@ import { Author } from '../models/author.model';
 export class AuthorService {
   private readonly apiUrl = 'http://localhost:8080/api/authors';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getAuthors(): Observable<Author[]> {
     return this.http.get<Author[]>(this.apiUrl);

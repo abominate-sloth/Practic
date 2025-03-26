@@ -10,7 +10,7 @@ import { Role } from '../models/role.model';
 export class UserService {
   private readonly apiUrl = 'http://localhost:8080/api/users';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl);

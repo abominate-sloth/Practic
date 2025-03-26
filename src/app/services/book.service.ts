@@ -11,7 +11,7 @@ export class BookService {
   private readonly apiUrl = 'http://localhost:8080/api/books';
   private readonly genresUrl = 'http://localhost:8080/api/genres';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getBooks(): Observable<Book[]> {
     return this.http.get<Book[]>(this.apiUrl);

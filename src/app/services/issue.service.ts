@@ -11,7 +11,7 @@ import { User } from '../models/user.model';
 export class IssueService {
   private readonly apiUrl = 'http://localhost:8080/api/issues';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getIssues(): Observable<Issue[]> {
     return this.http.get<Issue[]>(this.apiUrl);

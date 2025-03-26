@@ -9,7 +9,7 @@ import { Genre } from '../models/genre.model';
 export class GenreService {
   private readonly apiUrl = 'http://localhost:8080/api/genres'; // URL для работы с жанрами
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getGenres(): Observable<Genre[]> {
     return this.http.get<Genre[]>(this.apiUrl);
