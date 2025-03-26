@@ -9,7 +9,7 @@ import { User } from '../models/user.model';
   providedIn: 'root'
 })
 export class ReviewService {
-  private apiUrl = 'http://localhost:8080/api/reviews';
+  private readonly apiUrl = 'http://localhost:8080/api/reviews';
 
   constructor(private http: HttpClient) {}
 

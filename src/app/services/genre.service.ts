@@ -7,7 +7,7 @@ import { Genre } from '../models/genre.model';
   providedIn: 'root',
 })
 export class GenreService {
-  private apiUrl = 'http://localhost:8080/api/genres'; // URL для работы с жанрами
+  private readonly apiUrl = 'http://localhost:8080/api/genres'; // URL для работы с жанрами
 
   constructor(private http: HttpClient) {}
 

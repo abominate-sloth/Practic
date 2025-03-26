@@ -8,8 +8,8 @@ import { Genre } from '../models/genre.model';
   providedIn: 'root'
 })
 export class BookService {
-  private apiUrl = 'http://localhost:8080/api/books';
-  private genresUrl = 'http://localhost:8080/api/genres';
+  private readonly apiUrl = 'http://localhost:8080/api/books';
+  private readonly genresUrl = 'http://localhost:8080/api/genres';
 
   constructor(private http: HttpClient) {}
 
