@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -38,7 +37,7 @@ public class ReviewController {
         List<Review> reviews = reviewService.filterReviews(bookId, userId, rating);
         List<ReviewResponseDTO> dtos = reviews.stream()
                 .map(this::convertToResponseDTO)
-                .collect(Collectors.toList());
+                .toList(); // Изменено с collect(Collectors.toList())
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 

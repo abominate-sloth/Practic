@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -38,7 +37,7 @@ public class UserController {
         List<User> users = userService.filterUsers(username, email, joinDate);
         List<UserResponseDTO> responseDTOs = users.stream()
                 .map(this::convertToResponseDTO)
-                .collect(Collectors.toList());
+                .toList(); // Изменено с collect(Collectors.toList())
         return new ResponseEntity<>(responseDTOs, HttpStatus.OK);
     }
 
@@ -77,38 +76,4 @@ public class UserController {
 
     // Удалить пользователя
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        User user = userService.getUserById(id);
-        if (user != null) {
-            userService.deleteUser(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    // --- Методы преобразования ---
-    private User convertToEntity(UserRequestDTO dto) {
-        User user = new User();
-        user.setUsername(dto.getUsername());
-        user.setPasswordHash(dto.getPasswordHash());
-        user.setEmail(dto.getEmail());
-        user.setJoinDate(dto.getJoinDate());
-
-        // Устанавливаем роль через roleService
-        user.setRole(roleService.getRoleById(dto.getRoleId()));
-        return user;
-    }
-
-    private UserResponseDTO convertToResponseDTO(User user) {
-        RoleResponseDTO roleDTO = new RoleResponseDTO(user.getRole().getId(), user.getRole().getRoleName());
-
-        return new UserResponseDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getJoinDate(),
-                roleDTO
-        );
-    }
-}
+    public ResponseEntity<Void> deleteUser(@PathVariable int id

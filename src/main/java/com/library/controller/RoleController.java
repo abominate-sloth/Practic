@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/roles")
@@ -29,7 +28,7 @@ public class RoleController {
         List<Role> roles = roleService.filterRoles(roleName);
         List<RoleResponseDTO> responseDTOs = roles.stream()
                 .map(this::convertToResponseDTO)
-                .collect(Collectors.toList());
+                .toList(); // Изменено с collect(Collectors.toList())
         return new ResponseEntity<>(responseDTOs, HttpStatus.OK);
     }
 

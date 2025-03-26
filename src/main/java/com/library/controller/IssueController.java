@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/issues")
@@ -41,7 +40,7 @@ public class IssueController {
         List<Issue> issues = issueService.filterIssues(bookId, readerId, employeeId, issueDate, returnDate);
         List<IssueResponseDTO> dtos = issues.stream()
                 .map(this::convertToResponseDTO)
-                .collect(Collectors.toList());
+                .toList(); // Изменено с collect(Collectors.toList())
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 

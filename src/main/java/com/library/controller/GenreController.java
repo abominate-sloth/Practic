@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/genres")
@@ -31,7 +30,7 @@ public class GenreController {
         List<Genre> genres = genreService.filterGenres(name);
         List<GenreResponseDTO> dtos = genres.stream()
                 .map(this::convertToResponseDTO)
-                .collect(Collectors.toList());
+                .toList(); // Изменено с collect(Collectors.toList())
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 

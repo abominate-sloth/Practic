@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/books")
@@ -45,7 +44,7 @@ public class BookController {
         List<Book> books = bookService.filterBooks(title, genreId, publishYear, isbn, copiesAvailable);
         List<BookResponseDTO> dtos = books.stream()
                 .map(this::convertToResponseDTO)
-                .collect(Collectors.toList());
+                .toList(); // Изменено с collect(Collectors.toList())
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
@@ -117,7 +116,7 @@ public class BookController {
         // Преобразование авторов
         Set<AuthorResponseDTO> authorDTOs = book.getAuthors().stream()
                 .map(author -> new AuthorResponseDTO(author.getId(), author.getName(), author.getBirthDate()))
-                .collect(Collectors.toSet());
+                .toSet(); // Изменено с collect(Collectors.toSet())
 
         // Создаем объект BookResponseDTO через конструктор
         return new BookResponseDTO(

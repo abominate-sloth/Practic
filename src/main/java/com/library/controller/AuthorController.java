@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/authors")
@@ -33,7 +32,7 @@ public class AuthorController {
         List<Author> authors = authorService.filterAuthors(name, birthDate);
         List<AuthorResponseDTO> responseDTOs = authors.stream()
                 .map(this::convertToResponseDTO)
-                .collect(Collectors.toList());
+                .toList(); // Изменено с collect(Collectors.toList())
         return new ResponseEntity<>(responseDTOs, HttpStatus.OK);
     }
 
